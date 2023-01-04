@@ -110,10 +110,8 @@ public class MainActivity extends AppCompatActivity {
                                     ));
                             alertDialog.show();
 
-
                         } else if (coarseLocationGranted != null && coarseLocationGranted) {
                             // Only approximate location access granted.
-                            // Request an upgrade to precise location for best experience
                             Log.d("comp3018", "coarse location granted!");
 
                         } else {
@@ -139,35 +137,30 @@ public class MainActivity extends AppCompatActivity {
         Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 
         // Location settings are satisfied, launch the tracker service
-        task.addOnSuccessListener(this, new OnSuccessListener<LocationSettingsResponse>() {
-            @Override
-            public void onSuccess(LocationSettingsResponse locationSettingsResponse) {
-                Log.d("comp3018", "location setting is on!");
+        task.addOnSuccessListener(this, locationSettingsResponse -> {
+            Log.d("comp3018", "location setting is on!");
 
-                // Start the TrackerService
-                Intent startTrackerService = new Intent(MainActivity.this, TrackerService.class);
-                bindService(startTrackerService, serviceConnection, Context.BIND_AUTO_CREATE);
-                startService(startTrackerService);
-
-            }
+            // Start the TrackerService
+            Intent startTrackerService = new Intent(MainActivity.this, TrackerService.class);
+            bindService(startTrackerService, serviceConnection, Context.BIND_AUTO_CREATE);
+            getApplicationContext().startForegroundService(startTrackerService);
         });
 
-        // Prompt the user to change location settings (Turn on GPS)
-        // Location settings are not satisfied, show a dialog by calling startResolutionForResult().
-        // and check the result in onActivityResult().
-        task.addOnFailureListener(this, new OnFailureListener() {
-            @Override
-            public void onFailure(@NonNull Exception e) {
-                if (e instanceof ResolvableApiException) {
+        /*
+        * Prompt the user to change location settings (Turn on GPS)
+        * Location settings are not satisfied, show a dialog by calling startResolutionForResult().
+        * and check the result in onActivityResult().
+        * */
+        task.addOnFailureListener(this, e -> {
+            if (e instanceof ResolvableApiException) {
 
-                    try {
-                        Log.d("comp3018", "location setting is off");
-                        ResolvableApiException resolvable = (ResolvableApiException) e;
-                        resolvable.startResolutionForResult(MainActivity.this,
-                                RESULT_CODE_LOCATION_SETTINGS);
-                    } catch (IntentSender.SendIntentException sendEx) {
-                        // Ignore the error.
-                    }
+                try {
+                    Log.d("comp3018", "location setting is off");
+                    ResolvableApiException resolvable = (ResolvableApiException) e;
+                    resolvable.startResolutionForResult(MainActivity.this,
+                            RESULT_CODE_LOCATION_SETTINGS);
+                } catch (IntentSender.SendIntentException sendEx) {
+                    // Ignore the error.
                 }
             }
         });
@@ -183,10 +176,16 @@ public class MainActivity extends AppCompatActivity {
             if (resultCode != 0) {
                 Intent startTrackerService = new Intent(MainActivity.this, TrackerService.class);
                 bindService(startTrackerService, serviceConnection, Context.BIND_AUTO_CREATE);
-                startService(startTrackerService);
+                getApplicationContext().startForegroundService(startTrackerService);
             }
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        moveTaskToBack(true);
     }
 }
 
 // TODO: When a feature in your app needs location access, wait until the user interacts with the feature before making the permission request. (Based on WorkManagerDemo, MartinBroadcast)
+// TODO: ROBUST -> Request upgraded permission for best experience

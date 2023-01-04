@@ -1,17 +1,24 @@
 package com.example.runningtracker.service;
 
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Intent;
 import android.location.Location;
 import android.os.Binder;
+import android.os.Build;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Looper;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 
+import com.example.runningtracker.R;
+import com.example.runningtracker.view.MainActivity;
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
@@ -20,11 +27,13 @@ import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
 public class TrackerService extends Service {
+    private final String CHANNEL_ID = "100";
+
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
     private LocationRequest locationRequest;
 
-    public class MyBinder extends Binder implements IInterface{
+    public class MyBinder extends Binder implements IInterface {
         @Override
         public IBinder asBinder() {
             return this;
@@ -49,6 +58,8 @@ public class TrackerService extends Service {
                 }
             }
         };
+
+        buildNotificationChannel();
     }
 
     @Override
@@ -56,6 +67,7 @@ public class TrackerService extends Service {
         Log.d("comp3018", "TrackerService onStartCommand");
 
         startLocationUpdates();
+        buildNotification();
 
         return super.onStartCommand(intent, flags, startId);
     }
@@ -72,12 +84,35 @@ public class TrackerService extends Service {
         stopLocationUpdates();
     }
 
+    private void buildNotificationChannel() {
+        NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            CharSequence channelName = "Running Tracker";
+            int importance = NotificationManager.IMPORTANCE_LOW;
+            NotificationChannel channel = new NotificationChannel(CHANNEL_ID, channelName, importance);
+            notificationManager.createNotificationChannel(channel);
+        }
+    }
+
+    private void buildNotification() {
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
+        Notification notification = new NotificationCompat.Builder(this, CHANNEL_ID).
+                setPriority(NotificationCompat.PRIORITY_HIGH).
+                setContentTitle("Running Tracker is running").
+                setSmallIcon(R.drawable.ic_launcher_background).
+                setContentIntent(pendingIntent).build();
+
+        startForeground(1, notification);
+    }
+
     private void startLocationUpdates() {
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest,
                     locationCallback,
                     Looper.getMainLooper());
-        } catch(SecurityException e) {
+        } catch (SecurityException e) {
             // lacking permission to access location
         }
     }
