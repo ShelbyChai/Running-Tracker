@@ -1,28 +1,28 @@
 package com.example.runningtracker.view;
 
+import android.Manifest;
+import android.content.Context;
+import android.content.Intent;
+import android.content.IntentSender;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Toast;
+
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
-
-import android.Manifest;
-import android.content.ComponentName;
-import android.content.Context;
-import android.content.Intent;
-import android.content.IntentSender;
-import android.content.ServiceConnection;
-import android.location.Location;
-import android.os.Bundle;
-import android.os.IBinder;
-import android.util.Log;
-import android.view.View;
-import android.widget.Toast;
+import androidx.lifecycle.ViewModelProvider;
+import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.runningtracker.R;
-import com.example.runningtracker.service.TrackerCallback;
+import com.example.runningtracker.databinding.ActivityMainBinding;
 import com.example.runningtracker.service.TrackerService;
+import com.example.runningtracker.viewmodel.MainViewModel;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
@@ -36,51 +36,29 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     public static final int RESULT_CODE_LOCATION_SETTINGS = 2;
 
-    private TrackerService.MyBinder trackerBinder = null;
-    TrackerCallback trackerCallback;
-
-    private ServiceConnection serviceConnection = new ServiceConnection() {
-        @Override
-        public void onServiceConnected(ComponentName name, IBinder service) {
-            Log.d("comp3018", "MainActivity onServiceConnected");
-            trackerBinder = (TrackerService.MyBinder) service;
-            trackerBinder.registerCallback(trackerCallback);
-        }
-
-        @Override
-        public void onServiceDisconnected(ComponentName name) {
-            Log.d("comp3018", "MainActivity onServiceDisconnected");
-            trackerBinder.unregisterCallback(trackerCallback);
-            trackerBinder = null;
-        }
-    };
+    private MainViewModel mainViewModel;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        trackerCallback = new TrackerCallback() {
-            @Override
-            public void runningTrackerLocationEvent(Location location) {
-                //                    if (prevLocation != null) {
-//                        distance = prevLocation.distanceTo(location);
-//                        Log.d("comp3018", "Travel distance from last location: " + distance);
-//                        Log.d("comp3018", "Travel speed: " + location.getSpeed());
-//
-//                    }
-//                    prevLocation = location;
-                Log.d("comp3018", "location " + location.toString());
-            }
-        };
+        // Create viewModel and bind layout views to architecutre component
+        ActivityMainBinding activityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
+        mainViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
+                (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
+                        getInstance(this.getApplication())).get(MainViewModel.class);
+
+        setContentView(activityMainBinding.getRoot());
+        activityMainBinding.setViewmodel(mainViewModel);
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
-        unbindService(serviceConnection);
-        serviceConnection = null;
+        unbindService(mainViewModel.getServiceConnection());
+        mainViewModel.setServiceConnection(null);
         stopService(new Intent(MainActivity.this, TrackerService.class));
     }
 
@@ -94,7 +72,7 @@ public class MainActivity extends AppCompatActivity {
     // Start the TrackerService
     public void startTrackerService() {
         Intent startTrackerService = new Intent(MainActivity.this, TrackerService.class);
-        bindService(startTrackerService, serviceConnection, Context.BIND_AUTO_CREATE);
+        bindService(startTrackerService, mainViewModel.getServiceConnection(), Context.BIND_AUTO_CREATE);
         getApplicationContext().startForegroundService(startTrackerService);
     }
 

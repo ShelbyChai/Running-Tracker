@@ -22,19 +22,10 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
-    compileOptions {
-        sourceCompatibility JavaVersion.VERSION_1_8
-        targetCompatibility JavaVersion.VERSION_1_8
+
+    buildFeatures {
+        dataBinding true
     }
-
-//    buildFeatures {
-//        compose true
-//    }
-//
-//    composeOptions {
-//        kotlinCompilerExtensionVersion = "1.1.1"
-//    }
-
 }
 
 dependencies {
@@ -48,4 +39,8 @@ dependencies {
 
     // Google Play Service
     implementation 'com.google.android.gms:play-services-location:21.0.1'
+
+    // Android View Model
+    implementation 'androidx.lifecycle:lifecycle-extensions:2.2.0'
+    implementation "androidx.lifecycle:lifecycle-viewmodel:2.5.1"
 }
