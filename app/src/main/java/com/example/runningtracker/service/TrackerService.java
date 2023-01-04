@@ -1,12 +1,16 @@
-package com.example.runningtracker;
+package com.example.runningtracker.service;
 
-import androidx.annotation.NonNull;
-import androidx.appcompat.app.AppCompatActivity;
-
+import android.app.Service;
+import android.content.Intent;
 import android.location.Location;
-import android.os.Bundle;
+import android.os.Binder;
+import android.os.IBinder;
+import android.os.IInterface;
 import android.os.Looper;
 import android.util.Log;
+
+import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.location.FusedLocationProviderClient;
 import com.google.android.gms.location.LocationCallback;
@@ -15,19 +19,26 @@ import com.google.android.gms.location.LocationResult;
 import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
-public class MainActivity extends AppCompatActivity {
-
+public class TrackerService extends Service {
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
+
+    public class MyBinder extends Binder implements IInterface{
+        @Override
+        public IBinder asBinder() {
+            return this;
+        }
+    }
 
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+    public void onCreate() {
+        Log.d("comp3018", "TrackerService onCreate");
+        super.onCreate();
 
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
-        LocationRequest locationRequest = new
+        locationRequest = new
                 LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build();
 
         locationCallback = new LocationCallback() {
@@ -38,7 +49,30 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         };
+    }
 
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("comp3018", "TrackerService onStartCommand");
+
+        startLocationUpdates();
+
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d("comp3018", "TrackerService onBind");
+        return new MyBinder();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        stopLocationUpdates();
+    }
+
+    private void startLocationUpdates() {
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest,
                     locationCallback,
@@ -47,7 +81,8 @@ public class MainActivity extends AppCompatActivity {
             // lacking permission to access location
         }
     }
-}
 
-// Best Practice
-// TODO: When a feature in your app needs location access, wait until the user interacts with the feature before making the permission request.
+    private void stopLocationUpdates() {
+        fusedLocationClient.removeLocationUpdates(locationCallback);
+    }
+}

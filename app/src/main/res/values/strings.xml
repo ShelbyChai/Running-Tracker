@@ -1,3 +1,7 @@
 <resources>
     <string name="app_name">Running Tracker</string>
+
+    <!-- Messages -->
+    <string name="set_permissions_in_settings">Go to Settings -> Location -> App Permission
+        -> Running Tracker -> App Permissions and grant access to Location.</string>
 </resources>
