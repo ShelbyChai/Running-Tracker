@@ -12,6 +12,7 @@ import android.os.Build;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Looper;
+import android.os.RemoteCallbackList;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -29,35 +30,45 @@ import com.google.android.gms.location.Priority;
 public class TrackerService extends Service {
     private final String CHANNEL_ID = "100";
 
+    private final RemoteCallbackList<MyBinder> remoteCallbackList = new RemoteCallbackList<MyBinder>();
+
     private FusedLocationProviderClient fusedLocationClient;
     private LocationCallback locationCallback;
-    private LocationRequest locationRequest;
 
     public class MyBinder extends Binder implements IInterface {
+        private TrackerCallback trackerCallback;
+
         @Override
         public IBinder asBinder() {
             return this;
         }
+
+        public void registerCallback(TrackerCallback callback) {
+            this.trackerCallback = callback;
+            remoteCallbackList.register(MyBinder.this);
+        }
+
+        public void unregisterCallback(TrackerCallback callback) {
+            remoteCallbackList.unregister(MyBinder.this);
+            this.trackerCallback = null;
+        }
+    }
+
+    /*
+     * Callback method to broadcast the location
+     * */
+    private void doCallbacks(Location location) {
+        final int n = remoteCallbackList.beginBroadcast();
+        for (int i = 0; i < n; i++) {
+            remoteCallbackList.getBroadcastItem(i).trackerCallback.runningTrackerLocationEvent(location);
+        }
+        remoteCallbackList.finishBroadcast();
     }
 
     @Override
     public void onCreate() {
         Log.d("comp3018", "TrackerService onCreate");
         super.onCreate();
-
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-
-        locationRequest = new
-                LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build();
-
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                for (Location location : locationResult.getLocations()) {
-                    Log.d("comp3018", "location " + location.toString());
-                }
-            }
-        };
 
         buildNotificationChannel();
     }
@@ -84,6 +95,10 @@ public class TrackerService extends Service {
         stopLocationUpdates();
     }
 
+    // Finish tracker
+    // Pause tracker
+    // Start Tracker
+
     private void buildNotificationChannel() {
         NotificationManager notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
 
@@ -108,6 +123,18 @@ public class TrackerService extends Service {
     }
 
     private void startLocationUpdates() {
+        LocationRequest locationRequest = new
+                LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+                    doCallbacks(location);
+                }
+            }
+        };
+
         try {
             fusedLocationClient.requestLocationUpdates(locationRequest,
                     locationCallback,
