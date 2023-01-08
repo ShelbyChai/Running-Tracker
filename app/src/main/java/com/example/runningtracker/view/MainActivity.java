@@ -1,7 +1,6 @@
 package com.example.runningtracker.view;
 
 import android.Manifest;
-import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.os.Bundle;
@@ -21,7 +20,6 @@ import androidx.lifecycle.ViewModelStoreOwner;
 
 import com.example.runningtracker.R;
 import com.example.runningtracker.databinding.ActivityMainBinding;
-import com.example.runningtracker.service.TrackerService;
 import com.example.runningtracker.viewmodel.MainViewModel;
 import com.google.android.gms.common.api.ResolvableApiException;
 import com.google.android.gms.location.LocationRequest;
@@ -53,27 +51,18 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.setViewmodel(mainViewModel);
     }
 
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-
-        unbindService(mainViewModel.getServiceConnection());
-        mainViewModel.setServiceConnection(null);
-        stopService(new Intent(MainActivity.this, TrackerService.class));
-    }
-
-    public void onClickStartRunning(View view) {
-        locationPermissionRequest.launch(new String[]{
+    public void onClickStartRunActivity(View view) {
+        locationPermissionRequest.launch(new String[] {
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.ACCESS_COARSE_LOCATION
         });
     }
 
-    // Start the TrackerService
-    public void startTrackerService() {
-        Intent startTrackerService = new Intent(MainActivity.this, TrackerService.class);
-        bindService(startTrackerService, mainViewModel.getServiceConnection(), Context.BIND_AUTO_CREATE);
-        getApplicationContext().startForegroundService(startTrackerService);
+    // Start Run Activity
+    public void startRunActivity() {
+        Log.d("comp3018", "MainActivity startRunActivity");
+        Intent runActivity = new Intent(MainActivity.this, RunActivity.class);
+        startActivity(runActivity);
     }
 
     /*
@@ -144,7 +133,7 @@ public class MainActivity extends AppCompatActivity {
         task.addOnSuccessListener(this, locationSettingsResponse -> {
             Log.d("comp3018", "location setting is on!");
 
-            startTrackerService();
+            startRunActivity();
         });
 
         /*
@@ -172,11 +161,11 @@ public class MainActivity extends AppCompatActivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
-            // Launch the TrackerService if the user enabled the location settings (GPS settings)
+            // Start the Run Activity if the user enabled the location settings (GPS settings)
             case RESULT_CODE_LOCATION_SETTINGS:
                 Log.d("comp3018", "result code: " + resultCode);
                 if (resultCode != 0) {
-                    startTrackerService();
+                    startRunActivity();
                 }
                 break;
             default:
