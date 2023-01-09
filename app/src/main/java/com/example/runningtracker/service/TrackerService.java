@@ -5,13 +5,16 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Binder;
 import android.os.Build;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IInterface;
-import android.os.Looper;
 import android.os.RemoteCallbackList;
 import android.util.Log;
 
@@ -20,19 +23,18 @@ import androidx.core.app.NotificationCompat;
 
 import com.example.runningtracker.R;
 import com.example.runningtracker.view.MainActivity;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
 import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
 import com.google.android.gms.location.Priority;
 
 public class TrackerService extends Service {
+    public final static int SERVICE_RUNNING = 200;
+    public final static int SERVICE_PAUSED = 201;
     private final String NOTIFICATION_CHANNEL_ID = "100";
 
     private final RemoteCallbackList<MyBinder> remoteCallbackList = new RemoteCallbackList<MyBinder>();
-    private FusedLocationProviderClient fusedLocationClient;
-    private LocationCallback locationCallback;
+    private LocationManager locationManager;
+    private MyLocationListener locationListener;
+    private int serviceStatus;
 
     /* Binder */
 
@@ -73,12 +75,22 @@ public class TrackerService extends Service {
     /*
      * Callback method to broadcast the location
      * */
-    private void doCallbacks(Location location) {
+    private void doCallbacks(Location location, int serviceStatus) {
         final int n = remoteCallbackList.beginBroadcast();
         for (int i = 0; i < n; i++) {
-            remoteCallbackList.getBroadcastItem(i).trackerCallback.runningTrackerLocationEvent(location);
+            remoteCallbackList.getBroadcastItem(i).trackerCallback.runningTrackerLocationEvent(location, serviceStatus);
         }
         remoteCallbackList.finishBroadcast();
+    }
+
+    /* Location Listener */
+
+    public class MyLocationListener implements LocationListener {
+        @Override
+        public void onLocationChanged(Location location) {
+            Log.d("comp3018", "location " + location.toString());
+            doCallbacks(location, serviceStatus);
+        }
     }
 
     /* Service Lifecycle */
@@ -88,17 +100,8 @@ public class TrackerService extends Service {
         Log.d("comp3018", "TrackerService onCreate");
         super.onCreate();
 
-        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
-        locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                for (Location location : locationResult.getLocations()) {
-                    if (location != null) {
-                        doCallbacks(location);
-                    }
-                }
-            }
-        };
+        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        locationListener = new MyLocationListener();
 
         buildNotificationChannel();
     }
@@ -128,24 +131,30 @@ public class TrackerService extends Service {
     /* Location update buttons */
 
     private void startRunning() {
-        LocationRequest locationRequest = new
-                LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build();
-
+        serviceStatus = SERVICE_RUNNING;
         try {
-            fusedLocationClient.requestLocationUpdates(locationRequest,
-                    locationCallback,
-                    Looper.getMainLooper());
-        } catch (SecurityException e) {
-            Log.e("comp3018", e.toString());
+            locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                    1000,
+                    0,
+                    locationListener);
+        } catch(SecurityException e) {
+            Log.d("comp3018", e.toString());
         }
     }
 
     private void pauseRunning() {
-        fusedLocationClient.removeLocationUpdates(locationCallback);
+        serviceStatus = SERVICE_PAUSED;
+        if (locationManager != null) {
+            // Pass null location to reset previous location to null
+            doCallbacks(null, serviceStatus);
+            locationManager.removeUpdates(locationListener);
+        }
     }
 
     private void stopRunning() {
-        fusedLocationClient.removeLocationUpdates(locationCallback);
+        if (locationManager != null) {
+            locationManager.removeUpdates(locationListener);
+        }
     }
 
     /* Notification */

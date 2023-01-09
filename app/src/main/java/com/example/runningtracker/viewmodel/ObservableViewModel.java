@@ -1,5 +1,6 @@
 package com.example.runningtracker.viewmodel;
 
+import android.annotation.SuppressLint;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
@@ -14,6 +15,19 @@ public class ObservableViewModel extends AndroidViewModel implements Observable 
     public ObservableViewModel(@NonNull Application application) {
         super(application);
     }
+
+    /* Helper formatter functions */
+
+    @SuppressLint("DefaultLocale")
+    public String formatTime(int totalSecs) {
+        int seconds = (totalSecs % 60);
+        int minutes = (totalSecs % 3600) / 60;
+        int hours = (totalSecs / 3600);
+
+        return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    /* Override */
 
     @Override
     public void addOnPropertyChangedCallback(OnPropertyChangedCallback callback) {

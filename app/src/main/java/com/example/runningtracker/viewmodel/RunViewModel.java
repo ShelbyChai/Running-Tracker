@@ -20,7 +20,9 @@ public class RunViewModel extends ObservableViewModel {
     private TrackerCallback trackerCallback;
 
     /* Bindable Object */
-    private final MutableLiveData<Integer> distanceTravelled = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> totalTime = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> totalDistance = new MutableLiveData<>(0);
+    private final MutableLiveData<Float> pace = new MutableLiveData<Float>((float) 0);
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -41,26 +43,43 @@ public class RunViewModel extends ObservableViewModel {
     public RunViewModel(@NonNull Application application) {
         super(application);
 
-        calculateTotalDistance();
+        updateRunData();
     }
 
-    private void calculateTotalDistance() {
+    private void updateRunData() {
         trackerCallback = new TrackerCallback() {
             private Location prevLocation = null;
+            private int duration = 0;
+            private int distance = 0;
 
             @Override
-            public void runningTrackerLocationEvent(Location location) {
-                Log.d("comp3018", "location " + location.toString());
-//                Log.d("comp3018", "LatLng: " + location.getLatitude() + " " + location.getLongitude());
-//                Log.d("comp3018", "Accuracy: " + location.getAccuracy());
+            public void runningTrackerLocationEvent(Location location, int serviceStatus) {
+                // Reset previous location to null for Service Paused behaviour
+                if (serviceStatus == TrackerService.SERVICE_PAUSED) {
+                    prevLocation = null;
+                }
 
-                if (prevLocation != null) {
-                    int distance = Math.round(prevLocation.distanceTo(location));
+                if (serviceStatus == TrackerService.SERVICE_RUNNING && prevLocation != null) {
+                    // Increment duration
+                    duration += 1;
 
-                    distanceTravelled.setValue(distanceTravelled.getValue() + distance);
-                    notifyPropertyChanged(BR.distanceTravelled);
+                    // Update totalDistance
+                    distance += Math.round(prevLocation.distanceTo(location));
 
-                    Log.d("comp3018", "Distance Travelled: " + distanceTravelled.getValue());
+                    // Calculate pace
+//                    float kilometers = distance / 1000;
+//                    float minutes = duration / 60;
+//
+//                    if (kilometers != 0) {
+//                        pace.setValue(minutes / kilometers);
+//                    }
+
+                    totalTime.setValue(duration);
+                    totalDistance.setValue(distance);
+
+                    notifyPropertyChanged(BR.totalTime);
+                    notifyPropertyChanged(BR.totalDistance);
+//                    notifyPropertyChanged(BR.pace);
                 }
                 prevLocation = location;
             }
@@ -77,8 +96,18 @@ public class RunViewModel extends ObservableViewModel {
     }
 
     @Bindable
-    public MutableLiveData<Integer> getDistanceTravelled() {
-        return distanceTravelled;
+    public MutableLiveData<Integer> getTotalDistance() {
+        return totalDistance;
+    }
+
+    @Bindable
+    public MutableLiveData<Integer> getTotalTime() {
+        return totalTime;
+    }
+
+    @Bindable
+    public MutableLiveData<Float> getPace() {
+        return pace;
     }
 
     public ServiceConnection getServiceConnection() {

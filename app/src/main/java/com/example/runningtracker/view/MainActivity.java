@@ -180,5 +180,3 @@ public class MainActivity extends AppCompatActivity {
 }
 
 // When a feature in your app needs location access, wait until the user interacts with the feature before making the permission request. (Based on WorkManagerDemo, MartinBroadcast)
-// TODO: ROBUST -> Request upgraded permission for best experience
-// TODO: Callback return location information (Specific information like lat lon?)

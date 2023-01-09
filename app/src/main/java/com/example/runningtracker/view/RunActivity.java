@@ -1,31 +1,35 @@
 package com.example.runningtracker.view;
 
+import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
+import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
-import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.LayoutInflater;
-import android.view.View;
-
 import com.example.runningtracker.R;
-import com.example.runningtracker.databinding.ActivityMainBinding;
 import com.example.runningtracker.databinding.ActivityRunBinding;
 import com.example.runningtracker.service.TrackerService;
-import com.example.runningtracker.viewmodel.MainViewModel;
 import com.example.runningtracker.viewmodel.RunViewModel;
+import com.google.android.material.button.MaterialButton;
+import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
 public class RunActivity extends AppCompatActivity {
     private RunViewModel runViewModel;
+
+    private MaterialButton mPauseButton;
+    private MaterialButton mResume;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_run);
 
-        // Create viewModel and bind layout views to architecutre component
+        // Get viewModel and bind layout views to architecutre component
         ActivityRunBinding activityRunBinding = ActivityRunBinding.inflate(LayoutInflater.from(this));
         runViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
@@ -33,6 +37,10 @@ public class RunActivity extends AppCompatActivity {
 
         setContentView(activityRunBinding.getRoot());
         activityRunBinding.setViewmodel(runViewModel);
+
+        // Get Views
+        mPauseButton = findViewById(R.id.pauseTracker);
+        mResume = findViewById(R.id.resumeTracker);
 
         startTrackerService();
     }
@@ -43,12 +51,22 @@ public class RunActivity extends AppCompatActivity {
         startForegroundService(trackerService);
     }
 
-    public void onClickResumeRunning(View view) {
+    public void onClickPauseRunning(View view) {
+        if (runViewModel.getTrackerBinder() != null) {
+            Log.d("comp3018", "Run Activity pause pressed");
+            runViewModel.getTrackerBinder().pauseRunning();
 
+            mPauseButton.setVisibility(View.GONE);
+            mResume.setVisibility(View.VISIBLE);
+        }
     }
 
-    public void onClickPauseRunning(View view) {
-        if (runViewModel.getTrackerBinder() != null) runViewModel.getTrackerBinder().pauseRunning();
+    public void onClickResumeRunning(View view) {
+        Log.d("comp3018", "Run Activity resume pressed");
+        runViewModel.getTrackerBinder().startRunning();
+
+        mPauseButton.setVisibility(View.VISIBLE);
+        mResume.setVisibility(View.GONE);
     }
 
     public void onClickStopRunning(View view) {
@@ -68,8 +86,8 @@ public class RunActivity extends AppCompatActivity {
     public void onBackPressed() {
         super.onBackPressed();
 
-        unbindService(runViewModel.getServiceConnection());
-        runViewModel.setServiceConnection(null);
-        stopService(new Intent(RunActivity.this, TrackerService.class));
+//        unbindService(runViewModel.getServiceConnection());
+//        runViewModel.setServiceConnection(null);
+//        stopService(new Intent(RunActivity.this, TrackerService.class));
     }
 }

@@ -4,7 +4,6 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <data>
-
         <variable
             name="viewmodel"
             type="com.example.runningtracker.viewmodel.RunViewModel" />
@@ -21,7 +20,7 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="55dp"
             android:layout_marginEnd="10dp"
-            android:text="Duration"
+            android:text="@{viewmodel.formatTime(viewmodel.totalTime)}"
             app:layout_constraintEnd_toEndOf="@+id/textViewRunCalories"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -30,7 +29,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginStart="78dp"
-            android:text="@{String.valueOf(viewmodel.getDistanceTravelled)}"
+            android:text="@{String.valueOf(viewmodel.totalDistance)}"
             app:layout_constraintBaseline_toBaselineOf="@+id/textViewRunCalories"
             app:layout_constraintStart_toStartOf="parent" />
 
@@ -49,33 +48,65 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginEnd="16dp"
-            android:text="Avg Pace (min\km)"
+            android:text="Pace"
             app:layout_constraintBaseline_toBaselineOf="@+id/textViewRunCalories"
             app:layout_constraintEnd_toEndOf="parent" />
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/pause"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginStart="76dp"
-            android:layout_marginBottom="104dp"
-            android:onClick="onClickPauseRunning"
-            android:text="Pause"
-            app:cornerRadius="0dp"
+            android:gravity="center"
+            android:orientation="horizontal"
+            android:padding="24dp"
             app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent">
 
-        <com.google.android.material.button.MaterialButton
-            android:id="@+id/stop"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="236dp"
-            android:layout_marginBottom="104dp"
-            android:onClick="onClickStopRunning"
-            android:text="Stop"
-            app:cornerRadius="0dp"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/pauseTracker"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onClickPauseRunning"
+                android:text="Pause"
+                app:backgroundTint="@color/black"
+                app:cornerRadius="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/resumeTracker"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onClickResumeRunning"
+                android:text="Resume"
+                android:visibility="gone"
+                app:backgroundTint="@color/black"
+                app:cornerRadius="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent" />
+
+            <View
+                android:layout_width="0dp"
+                android:layout_height="50dp"
+                android:layout_weight="0.3" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/stopTracker"
+                style="@style/Widget.MaterialComponents.Button.OutlinedButton"
+                android:layout_width="0dp"
+                android:layout_height="match_parent"
+                android:layout_weight="1"
+                android:onClick="onClickStopRunning"
+                android:text="Stop"
+                app:backgroundTint="@color/white"
+                app:cornerRadius="0dp"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintStart_toStartOf="parent"
+                app:strokeColor="@color/black" />
+
+        </LinearLayout>
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>
