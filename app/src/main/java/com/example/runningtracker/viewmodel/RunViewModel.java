@@ -20,9 +20,10 @@ public class RunViewModel extends ObservableViewModel {
     private TrackerCallback trackerCallback;
 
     /* Bindable Object */
-    private final MutableLiveData<Integer> totalTime = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> totalDuration = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> totalDistance = new MutableLiveData<>(0);
-    private final MutableLiveData<Float> pace = new MutableLiveData<Float>((float) 0);
+    private final MutableLiveData<Double> totalPace = new MutableLiveData<>((double) 0);
+    private final MutableLiveData<Integer> totalCalories = new MutableLiveData<>(0);
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -51,6 +52,8 @@ public class RunViewModel extends ObservableViewModel {
             private Location prevLocation = null;
             private int duration = 0;
             private int distance = 0;
+            private double pace = 0;
+            private int calories = 0;
 
             @Override
             public void runningTrackerLocationEvent(Location location, int serviceStatus) {
@@ -60,26 +63,33 @@ public class RunViewModel extends ObservableViewModel {
                 }
 
                 if (serviceStatus == TrackerService.SERVICE_RUNNING && prevLocation != null) {
-                    // Increment duration
+                    // Increment duration (seconds)
                     duration += 1;
 
-                    // Update totalDistance
+                    // Update distance (km)
                     distance += Math.round(prevLocation.distanceTo(location));
 
-                    // Calculate pace
-//                    float kilometers = distance / 1000;
-//                    float minutes = duration / 60;
-//
-//                    if (kilometers != 0) {
-//                        pace.setValue(minutes / kilometers);
-//                    }
+                    // Calculate pace (min/km)
+                    double kilometers = ((double) distance / 1000);
+                    double minutes = ((double) duration / 60);
 
-                    totalTime.setValue(duration);
+                    if (kilometers != 0f) {
+                        pace = minutes / kilometers;
+                    }
+
+                    // Calculate calories burned 60 cal per km
+                    calories = (int) (kilometers * 60);
+
+                    // Set the Observable value and notify for changes
+                    totalDuration.setValue(duration);
                     totalDistance.setValue(distance);
+                    totalPace.setValue(pace);
+                    totalCalories.setValue(calories);
 
-                    notifyPropertyChanged(BR.totalTime);
+                    notifyPropertyChanged(BR.totalDuration);
                     notifyPropertyChanged(BR.totalDistance);
-//                    notifyPropertyChanged(BR.pace);
+                    notifyPropertyChanged(BR.totalPace);
+                    notifyPropertyChanged(BR.totalCalories);
                 }
                 prevLocation = location;
             }
@@ -101,13 +111,18 @@ public class RunViewModel extends ObservableViewModel {
     }
 
     @Bindable
-    public MutableLiveData<Integer> getTotalTime() {
-        return totalTime;
+    public MutableLiveData<Integer> getTotalDuration() {
+        return totalDuration;
     }
 
     @Bindable
-    public MutableLiveData<Float> getPace() {
-        return pace;
+    public MutableLiveData<Double> getTotalPace() {
+        return totalPace;
+    }
+
+    @Bindable
+    public MutableLiveData<Integer> getTotalCalories() {
+        return totalCalories;
     }
 
     public ServiceConnection getServiceConnection() {

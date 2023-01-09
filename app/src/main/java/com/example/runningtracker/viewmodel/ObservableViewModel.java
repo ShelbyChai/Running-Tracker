@@ -19,12 +19,25 @@ public class ObservableViewModel extends AndroidViewModel implements Observable 
     /* Helper formatter functions */
 
     @SuppressLint("DefaultLocale")
-    public String formatTime(int totalSecs) {
-        int seconds = (totalSecs % 60);
-        int minutes = (totalSecs % 3600) / 60;
-        int hours = (totalSecs / 3600);
+    public String formatTime(int duration) {
+        int seconds = (duration % 60);
+        int minutes = (duration % 3600) / 60;
+        int hours = (duration / 3600);
 
         return String.format("%02d:%02d:%02d", hours, minutes, seconds);
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String formatDistance(int distance) {
+        double kilometers = (double) distance / 1000;
+
+        return String.format("%.3f", kilometers);
+    }
+
+    @SuppressLint("DefaultLocale")
+    public String formatPace(double pace) {
+
+        return String.format("%.2f", pace);
     }
 
     /* Override */
