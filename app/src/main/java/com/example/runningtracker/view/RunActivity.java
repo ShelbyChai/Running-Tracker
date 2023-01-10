@@ -7,9 +7,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.Bundle;
 import android.os.Looper;
+import android.os.Message;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -35,9 +39,15 @@ import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.List;
+import java.util.Objects;
 
 public class RunActivity extends AppCompatActivity implements OnMapReadyCallback {
     // Key name to retrieve pause and resume buttons' visibility state for lifecycles
@@ -47,6 +57,8 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private RunViewModel runViewModel;
     private ActivityRunBinding activityRunBinding;
+
+    private boolean running = true;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -125,6 +137,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
     public void finishRun() {
         if (runViewModel.getTrackerBinder() != null) {
+            running = false;
             runViewModel.getTrackerBinder().stopRunning();
 
             runViewModel.insert(new Run(String.valueOf(Calendar.getInstance().getTime()),
@@ -182,10 +195,9 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
     // TODO: Create a thread for this location update
     @Override
-    public void onMapReady(GoogleMap googleMap) {
+    public void onMapReady(@NonNull GoogleMap googleMap) {
 
         mMap = googleMap;
-        mMap.setMapType(GoogleMap.MAP_TYPE_TERRAIN);
 
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
                 ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -196,28 +208,49 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         mMap.getUiSettings().setMyLocationButtonEnabled(true);
         mMap.getUiSettings().setZoomGesturesEnabled(true);
 
-        FusedLocationProviderClient fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
-        LocationRequest locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000).build();
-        LocationCallback locationCallback = new LocationCallback() {
-            @Override
-            public void onLocationResult(@NonNull LocationResult locationResult) {
-                super.onLocationResult(locationResult);
-                for (Location location : locationResult.getLocations()) {
-                    LatLng latLng = new LatLng(location.getLatitude(), location.getLongitude());
-                    Log.d("comp3018", "Lokasi");
-                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-                }
+        // Start thread to update Map
+        new MapUpdate().start();
+    }
+
+    /*
+     * Thread class to update and draw on Map.
+     * */
+    private class MapUpdate extends Thread implements Runnable {
+        // LatLng List for drawing a polyline
+        List<LatLng> latLngList = new ArrayList<LatLng>();
+
+        @Override
+        public void run() {
+            while (running) {
+                runOnUiThread(() -> {
+                    LatLng latLng = runViewModel.getLatLng();
+
+                    if (latLng != null && runViewModel.getTrackerBinder().getServiceStatus() != null) {
+                        String statusService = runViewModel.getTrackerBinder().getServiceStatus();
+                        latLngList.add(latLng);
+
+                        // Draw polyline route on the map if service is running
+                        if (Objects.equals(statusService, TrackerService.SERVICE_RUNNING)) {
+                            Log.d("comp3018", "Map running");
+
+                            PolylineOptions options = new PolylineOptions().color(Color.RED).width(10).addAll(latLngList);
+                            mMap.addPolyline(options);
+                            mMap.addMarker(new MarkerOptions().position(latLngList.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                            mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+                            // Clear the LatLng List and not draw on the map if service is pause
+                        } else if (Objects.equals(statusService, TrackerService.SERVICE_PAUSE)) {
+                            Log.d("comp3018", "Map paused");
+
+                            latLngList.clear();
+                        }
+                    }
+                });
+                SystemClock.sleep(1000);
             }
-        };
-
-        try {
-            fusedLocationProviderClient.requestLocationUpdates(locationRequest,
-                    locationCallback,
-                    Looper.myLooper());
-        } catch (SecurityException e) {
-
         }
     }
+
 
     @Override
     protected void onDestroy() {
@@ -226,6 +259,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         if (runViewModel.getTrackerBinder() != null) {
             unbindService(runViewModel.getServiceConnection());
             if (isFinishing()) {
+                running = false;
                 runViewModel.setServiceConnection(null);
                 stopService(new Intent(RunActivity.this, TrackerService.class));
             }
