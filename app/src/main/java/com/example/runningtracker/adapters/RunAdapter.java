@@ -10,7 +10,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.runningtracker.R;
-import com.example.runningtracker.entity.Run;
+import com.example.runningtracker.model.entity.Run;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -57,15 +57,28 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
     // Each individual element in the list is defined by a view holder object.
     static class RunViewHolder extends RecyclerView.ViewHolder {
         TextView nameView;
+        TextView durationView;
+        TextView distanceView;
+        TextView paceView;
+        TextView caloriesView;
 
         RunViewHolder(View itemView) {
             super(itemView);
+
             nameView = itemView.findViewById(R.id.nameView);
+            durationView = itemView.findViewById(R.id.durationView);
+            distanceView = itemView.findViewById(R.id.distanceView);
+            paceView = itemView.findViewById(R.id.paceView);
+            caloriesView = itemView.findViewById(R.id.caloriesView);
         }
 
         void bind(final Run run) {
             if (run != null) {
                 nameView.setText(run.getName());
+                durationView.setText(String.valueOf(run.getDuration()));
+                distanceView.setText(String.valueOf(run.getDistance()));
+                paceView.setText(String.valueOf(run.getPace()));
+                caloriesView.setText(String.valueOf(run.getCalories()));
             }
         }
     }

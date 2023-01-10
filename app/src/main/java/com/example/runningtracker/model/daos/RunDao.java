@@ -1,4 +1,4 @@
-package com.example.runningtracker.daos;
+package com.example.runningtracker.model.daos;
 
 import android.database.Cursor;
 
@@ -8,7 +8,7 @@ import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
 
-import com.example.runningtracker.entity.Run;
+import com.example.runningtracker.model.entity.Run;
 
 import java.util.List;
 

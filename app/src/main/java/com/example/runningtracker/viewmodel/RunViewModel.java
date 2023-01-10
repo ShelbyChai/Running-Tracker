@@ -12,18 +12,26 @@ import androidx.databinding.Bindable;
 import androidx.lifecycle.MutableLiveData;
 
 import com.example.runningtracker.BR;
+import com.example.runningtracker.model.entity.Run;
+import com.example.runningtracker.model.repository.MyRepository;
 import com.example.runningtracker.service.TrackerCallback;
 import com.example.runningtracker.service.TrackerService;
+import com.google.android.gms.maps.model.LatLng;
 
 public class RunViewModel extends ObservableViewModel {
     private TrackerService.MyBinder trackerBinder = null;
     private TrackerCallback trackerCallback;
+
+    private LatLng latLng;
 
     /* Bindable Object */
     private final MutableLiveData<Integer> totalDuration = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> totalDistance = new MutableLiveData<>(0);
     private final MutableLiveData<Double> totalPace = new MutableLiveData<>((double) 0);
     private final MutableLiveData<Integer> totalCalories = new MutableLiveData<>(0);
+
+    /* Repository */
+    private final MyRepository myRepository;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
@@ -44,6 +52,8 @@ public class RunViewModel extends ObservableViewModel {
     public RunViewModel(@NonNull Application application) {
         super(application);
 
+        myRepository = new MyRepository(application);
+
         updateRunData();
     }
 
@@ -62,12 +72,17 @@ public class RunViewModel extends ObservableViewModel {
                     prevLocation = null;
                 }
 
-                if (serviceStatus == TrackerService.SERVICE_RUNNING && prevLocation != null) {
+                if (serviceStatus == TrackerService.SERVICE_RUNNING) {
+                    // Set LatLng
+                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+
+                    if (prevLocation != null) {
+                        // Update distance (km)
+                        distance += Math.round(prevLocation.distanceTo(location));
+                    }
+
                     // Increment duration (seconds)
                     duration += 1;
-
-                    // Update distance (km)
-                    distance += Math.round(prevLocation.distanceTo(location));
 
                     // Calculate pace (min/km)
                     double kilometers = ((double) distance / 1000);
@@ -91,6 +106,7 @@ public class RunViewModel extends ObservableViewModel {
                     notifyPropertyChanged(BR.totalPace);
                     notifyPropertyChanged(BR.totalCalories);
                 }
+
                 prevLocation = location;
             }
         };
@@ -103,6 +119,18 @@ public class RunViewModel extends ObservableViewModel {
 
     public void setTrackerBinder(TrackerService.MyBinder trackerBinder) {
         this.trackerBinder = trackerBinder;
+    }
+
+    public ServiceConnection getServiceConnection() {
+        return serviceConnection;
+    }
+
+    public void setServiceConnection(ServiceConnection serviceConnection) {
+        this.serviceConnection = serviceConnection;
+    }
+
+    public LatLng getLatLng() {
+        return latLng;
     }
 
     @Bindable
@@ -125,11 +153,8 @@ public class RunViewModel extends ObservableViewModel {
         return totalCalories;
     }
 
-    public ServiceConnection getServiceConnection() {
-        return serviceConnection;
-    }
-
-    public void setServiceConnection(ServiceConnection serviceConnection) {
-        this.serviceConnection = serviceConnection;
+    /* Getter & Setter (Repository) */
+    public void insert(Run run) {
+        myRepository.insert(run);
     }
 }

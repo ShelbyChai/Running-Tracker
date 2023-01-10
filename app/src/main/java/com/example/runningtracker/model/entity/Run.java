@@ -1,4 +1,4 @@
-package com.example.runningtracker.entity;
+package com.example.runningtracker.model.entity;
 
 import androidx.annotation.NonNull;
 import androidx.room.ColumnInfo;

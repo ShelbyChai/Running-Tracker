@@ -1,11 +1,11 @@
-package com.example.runningtracker.repository;
+package com.example.runningtracker.model.repository;
 
 import android.app.Application;
 
 import androidx.lifecycle.LiveData;
 
-import com.example.runningtracker.daos.RunDao;
-import com.example.runningtracker.entity.Run;
+import com.example.runningtracker.model.daos.RunDao;
+import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.RunRoomDatabase;
 
 import java.util.List;

@@ -5,8 +5,8 @@ import android.app.Application;
 import androidx.annotation.NonNull;
 import androidx.lifecycle.LiveData;
 
-import com.example.runningtracker.entity.Run;
-import com.example.runningtracker.repository.MyRepository;
+import com.example.runningtracker.model.entity.Run;
+import com.example.runningtracker.model.repository.MyRepository;
 
 import java.util.List;
 

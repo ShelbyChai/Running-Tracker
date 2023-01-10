@@ -9,8 +9,8 @@ import androidx.room.Room;
 import androidx.room.RoomDatabase;
 import androidx.sqlite.db.SupportSQLiteDatabase;
 
-import com.example.runningtracker.daos.RunDao;
-import com.example.runningtracker.entity.Run;
+import com.example.runningtracker.model.daos.RunDao;
+import com.example.runningtracker.model.entity.Run;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;

@@ -10,5 +10,33 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
         android:text="RunName" />
+
+    <TextView
+        android:id="@+id/durationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="duration" />
+
+    <TextView
+        android:id="@+id/distanceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="distance" />
+
+    <TextView
+        android:id="@+id/paceView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="pace" />
+
+    <TextView
+        android:id="@+id/caloriesView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="calories" />
 </LinearLayout>
 
