@@ -4,4 +4,5 @@
     <!-- Messages -->
     <string name="set_permissions_in_settings">Go to Settings -> Location -> App Permission
         -> Running Tracker -> App Permissions and grant access to Location.</string>
+    <string name="notification_title">Running Activity</string>
 </resources>

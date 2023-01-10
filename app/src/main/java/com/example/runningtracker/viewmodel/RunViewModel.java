@@ -18,6 +18,8 @@ import com.example.runningtracker.service.TrackerCallback;
 import com.example.runningtracker.service.TrackerService;
 import com.google.android.gms.maps.model.LatLng;
 
+import java.util.Objects;
+
 public class RunViewModel extends ObservableViewModel {
     private TrackerService.MyBinder trackerBinder = null;
     private TrackerCallback trackerCallback;
@@ -66,20 +68,19 @@ public class RunViewModel extends ObservableViewModel {
             private int calories = 0;
 
             @Override
-            public void runningTrackerLocationEvent(Location location, int serviceStatus) {
-                // Reset previous location to null for Service Paused behaviour
-                if (serviceStatus == TrackerService.SERVICE_PAUSED) {
+            public void runningTrackerLocationEvent(Location location) {
+                if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_PAUSE)) {
                     prevLocation = null;
                 }
 
-                if (serviceStatus == TrackerService.SERVICE_RUNNING) {
+                if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_RUNNING)) {
                     // Set LatLng
                     latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-                    if (prevLocation != null) {
-                        // Update distance (km)
+                    // Update distance (km)
+                    if (prevLocation != null)
                         distance += Math.round(prevLocation.distanceTo(location));
-                    }
+
 
                     // Increment duration (seconds)
                     duration += 1;
