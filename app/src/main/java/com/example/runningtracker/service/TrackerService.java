@@ -179,7 +179,17 @@ public class TrackerService extends Service {
         if (locationManager != null) {
             serviceStatus = SERVICE_FINISH;
             locationManager.removeUpdates(locationListener);
+            locationManager = null;
         }
+
+        if (locationListener != null) {
+            locationListener = null;
+        }
+
+        // Stop all foreground services and cancel all the notification
+        stopForeground(true);
+        notificationManager.cancelAll();
+
     }
 
     /* Notification */
@@ -207,11 +217,12 @@ public class TrackerService extends Service {
     * */
     private void buildNotification() {
         Intent notificationIntent = new Intent(this, RunActivity.class);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
         notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).
                 setPriority(NotificationCompat.PRIORITY_HIGH).
                 setContentTitle(getString(R.string.notification_title)).
-                setSmallIcon(R.drawable.ic_launcher_background).
+                setSmallIcon(R.drawable.ic_launcher_icon_foreground).
                 setContentIntent(pendingIntent).
                 // 1
                 addAction(R.drawable.ic_notification_play, SERVICE_RUNNING, notificationButtons(SERVICE_RUNNING)).

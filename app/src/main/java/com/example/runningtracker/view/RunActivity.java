@@ -40,9 +40,13 @@ import com.google.android.gms.maps.model.LatLng;
 import java.util.Calendar;
 
 public class RunActivity extends AppCompatActivity implements OnMapReadyCallback {
+    // Key name to retrieve pause and resume buttons' visibility state for lifecycles
+    private final String PAUSE_BUTTON_VISIBILITY = "Pause Visibility";
+    private final String RESUME_BUTTON_VISIBILITY = "Resume Visibility";
+
+    private GoogleMap mMap;
     private RunViewModel runViewModel;
     private ActivityRunBinding activityRunBinding;
-    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -53,6 +57,8 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         runViewModel = new ViewModelProvider(this,
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
                         getInstance(this.getApplication())).get(RunViewModel.class);
+
+        activityRunBinding.setLifecycleOwner(this);
 
         setContentView(activityRunBinding.getRoot());
         activityRunBinding.setViewmodel(runViewModel);
@@ -217,14 +223,36 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onDestroy() {
         super.onDestroy();
 
-        unbindService(runViewModel.getServiceConnection());
-        runViewModel.setServiceConnection(null);
-        stopService(new Intent(RunActivity.this, TrackerService.class));
+        if (runViewModel.getTrackerBinder() != null) {
+            unbindService(runViewModel.getServiceConnection());
+            if (isFinishing()) {
+                runViewModel.setServiceConnection(null);
+                stopService(new Intent(RunActivity.this, TrackerService.class));
+            }
+        }
     }
 
     @Override
     public void onBackPressed() {
-        super.onBackPressed();
+        moveTaskToBack(true);
         Log.d("comp3018", "RunActivity onBackPressed");
+    }
+
+    // Store the Pause & Resume buttons' visibility state
+    @Override
+    protected void onSaveInstanceState(@NonNull Bundle outState) {
+        super.onSaveInstanceState(outState);
+
+        outState.putInt(PAUSE_BUTTON_VISIBILITY, activityRunBinding.pauseTracker.getVisibility());
+        outState.putInt(RESUME_BUTTON_VISIBILITY, activityRunBinding.resumeTracker.getVisibility());
+    }
+
+    // Restore the Pause & Resume buttons' visibility state
+    @Override
+    protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        activityRunBinding.pauseTracker.setVisibility(savedInstanceState.getInt(PAUSE_BUTTON_VISIBILITY));
+        activityRunBinding.resumeTracker.setVisibility(savedInstanceState.getInt(RESUME_BUTTON_VISIBILITY));
     }
 }

@@ -49,6 +49,8 @@ public class MainActivity extends AppCompatActivity {
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
                         getInstance(this.getApplication())).get(MainViewModel.class);
 
+        activityMainBinding.setLifecycleOwner(this);
+
         setContentView(activityMainBinding.getRoot());
         activityMainBinding.setViewmodel(mainViewModel);
 
@@ -75,6 +77,7 @@ public class MainActivity extends AppCompatActivity {
     public void startRunActivity() {
         Log.d("comp3018", "MainActivity startRunActivity");
         Intent runActivity = new Intent(MainActivity.this, RunActivity.class);
+
         startActivity(runActivity);
     }
 
