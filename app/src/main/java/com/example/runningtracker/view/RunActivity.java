@@ -15,14 +15,19 @@ import com.example.runningtracker.R;
 import com.example.runningtracker.databinding.ActivityRunBinding;
 import com.example.runningtracker.service.TrackerService;
 import com.example.runningtracker.viewmodel.RunViewModel;
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
+import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.material.button.MaterialButton;
-import com.google.android.material.floatingactionbutton.FloatingActionButton;
 
-public class RunActivity extends AppCompatActivity {
+public class RunActivity extends AppCompatActivity implements OnMapReadyCallback{
     private RunViewModel runViewModel;
 
     private MaterialButton mPauseButton;
     private MaterialButton mResume;
+    private GoogleMap mMap;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,10 +43,16 @@ public class RunActivity extends AppCompatActivity {
         setContentView(activityRunBinding.getRoot());
         activityRunBinding.setViewmodel(runViewModel);
 
+        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
+                .findFragmentById(R.id.map);
+        mapFragment.getMapAsync(this);
+
         // Get Views
         mPauseButton = findViewById(R.id.pauseTracker);
         mResume = findViewById(R.id.resumeTracker);
 
+        // Start the Tracker Service
         startTrackerService();
     }
 
@@ -89,5 +100,17 @@ public class RunActivity extends AppCompatActivity {
 //        unbindService(runViewModel.getServiceConnection());
 //        runViewModel.setServiceConnection(null);
 //        stopService(new Intent(RunActivity.this, TrackerService.class));
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+        mMap = googleMap;
+
+        // Add a marker in Sydney and move the camera
+        LatLng sydney = new LatLng(-34, 151);
+        mMap.addMarker(new MarkerOptions()
+                .position(sydney)
+                .title("Marker in Sydney"));
+//        mMap.moveCamera(CameraUpdateFactory.newLatLng(sydney));
     }
 }

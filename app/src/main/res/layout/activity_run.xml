@@ -160,6 +160,7 @@
             app:layout_constraintGuide_percent="0.30" />
 
         <View
+            android:id="@+id/section1"
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:background="@color/gray_opac"
@@ -167,7 +168,21 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/guideline2" />
 
+        <androidx.fragment.app.FragmentContainerView
+            android:id="@+id/map"
+            android:name="com.google.android.gms.maps.SupportMapFragment"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            app:layout_constraintVertical_weight="1"
+            app:layout_constraintTop_toBottomOf="@id/section1"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            tools:context=".view.RunActivity"
+            app:layout_constraintBottom_toTopOf="@id/section2"
+            tools:layout="@android:layout/simple_gallery_item" />
+
         <View
+            android:id="@+id/section2"
             android:layout_width="0dp"
             android:layout_height="2dp"
             android:background="@color/gray_opac"
@@ -224,6 +239,7 @@
                 android:layout_weight="1"
                 android:onClick="onClickStopRunning"
                 android:text="Stop"
+                android:textColor="@color/black"
                 app:backgroundTint="@color/white"
                 app:cornerRadius="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"

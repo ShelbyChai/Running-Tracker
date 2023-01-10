@@ -17,8 +17,11 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.runningtracker.R;
+import com.example.runningtracker.adapters.RunAdapter;
 import com.example.runningtracker.databinding.ActivityMainBinding;
 import com.example.runningtracker.viewmodel.MainViewModel;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -49,12 +52,23 @@ public class MainActivity extends AppCompatActivity {
 
         setContentView(activityMainBinding.getRoot());
         activityMainBinding.setViewmodel(mainViewModel);
+
+        // RecyclerView
+        RecyclerView recyclerView = findViewById(R.id.recyclerView);
+        final RunAdapter adapter = new RunAdapter(this);
+
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
+
+        // Observe
+        mainViewModel.getAllRuns().observe(this, adapter::setData);
     }
 
     public void onClickStartRunActivity(View view) {
         locationPermissionRequest.launch(new String[] {
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.INTERNET
         });
     }
 
@@ -178,5 +192,3 @@ public class MainActivity extends AppCompatActivity {
         moveTaskToBack(true);
     }
 }
-
-// When a feature in your app needs location access, wait until the user interacts with the feature before making the permission request. (Based on WorkManagerDemo, MartinBroadcast)
