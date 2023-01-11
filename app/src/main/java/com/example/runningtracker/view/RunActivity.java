@@ -22,7 +22,6 @@ import androidx.lifecycle.ViewModelProvider;
 
 import com.example.runningtracker.R;
 import com.example.runningtracker.databinding.ActivityRunBinding;
-import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.service.TrackerService;
 import com.example.runningtracker.viewmodel.RunViewModel;
 import com.google.android.gms.maps.CameraUpdateFactory;
@@ -35,10 +34,8 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 
 public class RunActivity extends AppCompatActivity implements OnMapReadyCallback {
     // Intent Key name
@@ -60,9 +57,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         runViewModel = new ViewModelProvider(this,
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
                         getInstance(this.getApplication())).get(RunViewModel.class);
-
         activityRunBinding.setLifecycleOwner(this);
-
         setContentView(activityRunBinding.getRoot());
         activityRunBinding.setViewmodel(runViewModel);
 
@@ -74,17 +69,22 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         mapFragment.getMapAsync(this);
 
 
-        // Buttons set onClick Listener
+        // Set onClick Listener for pause, resume and stop buttons
         activityRunBinding.buttonPauseTracker.setOnClickListener(view -> {
-            pauseRun();
+            runViewModel.getTrackerBinder().pauseRunning();
+            showResumeButton();
             Toast.makeText(this, "Run Activity paused", Toast.LENGTH_SHORT).show();
         });
+
         activityRunBinding.buttonResumeTracker.setOnClickListener(view -> {
-            resumeRun();
+            runViewModel.getTrackerBinder().startRunning();
+            showPauseButton();
             Toast.makeText(this, "Run Activity resumed", Toast.LENGTH_SHORT).show();
         });
+
         activityRunBinding.buttonStopTracker.setOnClickListener(view -> {
-            finishRun();
+            launchRunRecordActivity();
+
             Toast.makeText(this, "Run Activity finished", Toast.LENGTH_SHORT).show();
         });
 
@@ -104,53 +104,28 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         startForegroundService(trackerService);
     }
 
-    public void pauseRun() {
-        if (runViewModel.getTrackerBinder() != null) {
-            Log.d("comp3018", "Run Activity pause pressed");
-            runViewModel.getTrackerBinder().pauseRunning();
-
-            // Enable the visibility of resume button
-            activityRunBinding.buttonPauseTracker.setVisibility(View.GONE);
-            activityRunBinding.buttonResumeTracker.setVisibility(View.VISIBLE);
-        }
+    // Enable the visibility of resume button
+    public void showResumeButton() {
+        activityRunBinding.buttonPauseTracker.setVisibility(View.GONE);
+        activityRunBinding.buttonResumeTracker.setVisibility(View.VISIBLE);
     }
 
-    public void resumeRun() {
-        Log.d("comp3018", "Run Activity resume pressed");
-        if (runViewModel.getTrackerBinder() != null) {
-            runViewModel.getTrackerBinder().startRunning();
-
-            // Enable the visibility of pause button
-            activityRunBinding.buttonPauseTracker.setVisibility(View.VISIBLE);
-            activityRunBinding.buttonResumeTracker.setVisibility(View.GONE);
-        }
+    // Enable the visibility of pause button
+    public void showPauseButton() {
+        activityRunBinding.buttonPauseTracker.setVisibility(View.VISIBLE);
+        activityRunBinding.buttonResumeTracker.setVisibility(View.GONE);
     }
 
-    public void finishRun() {
-        if (runViewModel.getTrackerBinder() != null) {
-            runViewModel.setRunning(false);
-            runViewModel.getTrackerBinder().stopRunning();
+    // Launch the RunRecordActivity with intent containing the UID of the completed run
+    public void launchRunRecordActivity() {
+        runViewModel.finishRun();
+        Intent runRecordActivity = new Intent(this, RunRecordActivity.class);
+        Bundle bundle = new Bundle();
+        bundle.putString(KEY_RUNID, runViewModel.getUniqueRunID());
+        runRecordActivity.putExtras(bundle);
 
-            String uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
-
-            runViewModel.insert(new Run(uniqueRunID,
-                    "Activity",
-                    uniqueRunID,
-                    runViewModel.getTotalDuration().getValue(),
-                    runViewModel.getTotalDistance().getValue(),
-                    runViewModel.getTotalPace().getValue(),
-                    runViewModel.getTotalCalories().getValue()));
-
-            Log.d("comp3018", "RunID in RunActivity: " + uniqueRunID);
-
-            Intent runRecordActivity = new Intent(this, RunRecordActivity.class);
-            Bundle bundle = new Bundle();
-            bundle.putString(KEY_RUNID, uniqueRunID);
-            runRecordActivity.putExtras(bundle);
-
-            startActivity(runRecordActivity);
-            finish();
-        }
+        startActivity(runRecordActivity);
+        finish();
     }
 
     private final BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
@@ -161,17 +136,19 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
             switch (notificationIntent) {
                 case TrackerService.SERVICE_RUNNING:
                     Log.d("comp3018", "Notification resume pressed");
-                    resumeRun();
+                    runViewModel.getTrackerBinder().startRunning();
+                    showPauseButton();
 
                     break;
                 case TrackerService.SERVICE_PAUSE:
                     Log.d("comp3018", "Notification pause pressed");
-                    pauseRun();
+                    runViewModel.getTrackerBinder().pauseRunning();
+                    showResumeButton();
 
                     break;
                 case TrackerService.SERVICE_FINISH:
                     Log.d("comp3018", "Notification stop pressed");
-                    finishRun();
+                    launchRunRecordActivity();
 
                     break;
                 case TrackerService.NOTIFICATION_CONTENT_UPDATE:
@@ -223,28 +200,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         public void run() {
             while (runViewModel.isRunning()) {
                 runOnUiThread(() -> {
-                    LatLng latLng = runViewModel.getLatLng();
-
-                    if (latLng != null && runViewModel.getTrackerBinder().getServiceStatus() != null) {
-                        String statusService = runViewModel.getTrackerBinder().getServiceStatus();
-                        latLngList.add(latLng);
-
-                        // Draw polyline route on the map if service is running
-                        if (Objects.equals(statusService, TrackerService.SERVICE_RUNNING)) {
-                            Log.d("comp3018", "Map running");
-
-                            PolylineOptions options = new PolylineOptions().color(Color.RED).width(10).addAll(latLngList);
-                            runViewModel.getmMap().addPolyline(options);
-                            runViewModel.getmMap().addMarker(new MarkerOptions().position(latLngList.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
-                            runViewModel.getmMap().moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
-
-                            // Clear the LatLng List and not draw on the map if service is pause
-                        } else if (Objects.equals(statusService, TrackerService.SERVICE_PAUSE)) {
-                            Log.d("comp3018", "Map paused");
-
-                            latLngList.clear();
-                        }
-                    }
+                    runViewModel.drawPolylineOnMap(latLngList);
                 });
                 SystemClock.sleep(1000);
             }
@@ -252,16 +208,24 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
     }
 
 
+    /*
+    * 1. Unbind the service
+    * 2. Stop the foreground service, and unregister the notification Receiver
+    * */
     @Override
     protected void onDestroy() {
         super.onDestroy();
 
+        // 1
         if (runViewModel.getTrackerBinder() != null) {
             unbindService(runViewModel.getServiceConnection());
+            // 2
             if (isFinishing()) {
                 runViewModel.setRunning(false);
                 runViewModel.setServiceConnection(null);
                 stopService(new Intent(RunActivity.this, TrackerService.class));
+                runViewModel.setTrackerBinder(null);
+                unregisterReceiver(notificationReceiver);
             }
         }
     }

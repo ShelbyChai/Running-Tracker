@@ -3,6 +3,7 @@ package com.example.runningtracker.viewmodel;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.graphics.Color;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
@@ -16,18 +17,27 @@ import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.repository.MyRepository;
 import com.example.runningtracker.service.TrackerCallback;
 import com.example.runningtracker.service.TrackerService;
+import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
+import com.google.android.gms.maps.model.MarkerOptions;
+import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.util.Calendar;
+import java.util.List;
 import java.util.Objects;
 
 public class RunViewModel extends ObservableViewModel {
+    /* Binder */
     private TrackerService.MyBinder trackerBinder = null;
     private TrackerCallback trackerCallback;
 
+    /* Instantiate required variables */
     private GoogleMap mMap;
     private LatLng latLng;
     private boolean running;
+    private String uniqueRunID ;
 
     /* Bindable Object */
     private final MutableLiveData<Integer> totalDuration = new MutableLiveData<>(0);
@@ -35,7 +45,6 @@ public class RunViewModel extends ObservableViewModel {
     private final MutableLiveData<Double> totalPace = new MutableLiveData<>((double) 0);
     private final MutableLiveData<Integer> totalCalories = new MutableLiveData<>(0);
 
-    /* Repository */
     private final MyRepository myRepository;
 
     private ServiceConnection serviceConnection = new ServiceConnection() {
@@ -63,6 +72,14 @@ public class RunViewModel extends ObservableViewModel {
         updateRunData();
     }
 
+    /*
+    * 1. Set the latitude and longitude of the current location for map usage.
+    * 2. Update the current distance vairable.
+    * 3. Increment the duration variable.
+    * 4. Calculate the current pace using the distance / duration.
+    * 5. Calculate the total calories (60 cal per hour).
+    * 6. Set the total distance, duration, calories and pace and notify observer for changes.
+    * */
     private void updateRunData() {
         trackerCallback = new TrackerCallback() {
             private Location prevLocation = null;
@@ -78,18 +95,17 @@ public class RunViewModel extends ObservableViewModel {
                 }
 
                 if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_RUNNING)) {
-                    // Set LatLng
+                    // 1
                     latLng = new LatLng(location.getLatitude(), location.getLongitude());
 
-                    // Update distance (km)
+                    // 2
                     if (prevLocation != null)
                         distance += Math.round(prevLocation.distanceTo(location));
 
-
-                    // Increment duration (seconds)
+                    // 3
                     duration += 1;
 
-                    // Calculate pace (min/km)
+                    // 4
                     double kilometers = ((double) distance / 1000);
                     double minutes = ((double) duration / 60);
 
@@ -97,10 +113,10 @@ public class RunViewModel extends ObservableViewModel {
                         pace = minutes / kilometers;
                     }
 
-                    // Calculate calories burned 60 cal per km
+                    // 5
                     calories = (int) (kilometers * 60);
 
-                    // Set the Observable value and notify for changes
+                    // 6
                     totalDuration.setValue(duration);
                     totalDistance.setValue(distance);
                     totalPace.setValue(pace);
@@ -115,6 +131,56 @@ public class RunViewModel extends ObservableViewModel {
                 prevLocation = location;
             }
         };
+    }
+
+    /*
+    * 1. Set thread running to false and stop the service.
+    * 2. Insert the new run data into the database with current date and time as UID.
+    * */
+    public void finishRun() {
+        if (trackerBinder != null) {
+            // 1
+            running = false;
+            trackerBinder.stopRunning();
+
+            // 2
+            uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
+            insert(new Run(uniqueRunID,
+                    "Activity",
+                    uniqueRunID,
+                    totalDuration.getValue(),
+                    totalDistance.getValue(),
+                    totalPace.getValue(),
+                    totalCalories.getValue()));
+        }
+    }
+
+    /*
+    * 1. Draw polyline route on the map if service is running.
+    * 2. Clear the LatLng List and not draw on the map if service is pause.
+    * */
+    public void drawPolylineOnMap(List<LatLng> latLngList) {
+
+        if (latLng != null && trackerBinder.getServiceStatus() != null) {
+            String statusService = trackerBinder.getServiceStatus();
+            latLngList.add(latLng);
+
+            // 1
+            if (Objects.equals(statusService, TrackerService.SERVICE_RUNNING)) {
+                Log.d("comp3018", "Map running");
+
+                PolylineOptions options = new PolylineOptions().color(Color.RED).width(10).addAll(latLngList);
+                mMap.addPolyline(options);
+                mMap.addMarker(new MarkerOptions().position(latLngList.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+
+                // 2
+            } else if (Objects.equals(statusService, TrackerService.SERVICE_PAUSE)) {
+                Log.d("comp3018", "Map paused");
+
+                latLngList.clear();
+            }
+        }
     }
 
     /* Getter & Setter */
@@ -153,6 +219,10 @@ public class RunViewModel extends ObservableViewModel {
 
     public void setRunning(boolean running) {
         this.running = running;
+    }
+
+    public String getUniqueRunID() {
+        return uniqueRunID;
     }
 
     @Bindable
