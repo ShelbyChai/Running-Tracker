@@ -19,6 +19,7 @@ public class MainViewModel extends ObservableViewModel {
 
         myRepository = new MyRepository(application);
         allRuns = myRepository.getRuns();
+
     }
 
     public LiveData<List<Run>> getAllRuns() {

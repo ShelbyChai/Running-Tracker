@@ -16,6 +16,7 @@ import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.repository.MyRepository;
 import com.example.runningtracker.service.TrackerCallback;
 import com.example.runningtracker.service.TrackerService;
+import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.Objects;
@@ -24,7 +25,9 @@ public class RunViewModel extends ObservableViewModel {
     private TrackerService.MyBinder trackerBinder = null;
     private TrackerCallback trackerCallback;
 
+    private GoogleMap mMap;
     private LatLng latLng;
+    private boolean running;
 
     /* Bindable Object */
     private final MutableLiveData<Integer> totalDuration = new MutableLiveData<>(0);
@@ -55,6 +58,7 @@ public class RunViewModel extends ObservableViewModel {
         super(application);
 
         myRepository = new MyRepository(application);
+        running = true;
 
         updateRunData();
     }
@@ -131,8 +135,24 @@ public class RunViewModel extends ObservableViewModel {
         this.serviceConnection = serviceConnection;
     }
 
+    public GoogleMap getmMap() {
+        return mMap;
+    }
+
+    public void setmMap(GoogleMap mMap) {
+        this.mMap = mMap;
+    }
+
     public LatLng getLatLng() {
         return latLng;
+    }
+
+    public boolean isRunning() {
+        return running;
+    }
+
+    public void setRunning(boolean running) {
+        this.running = running;
     }
 
     @Bindable

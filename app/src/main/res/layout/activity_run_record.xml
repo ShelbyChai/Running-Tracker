@@ -49,7 +49,9 @@
                     android:id="@+id/imageViewMapSnapshot"
                     android:layout_width="match_parent"
                     android:layout_height="200dp"
+                    android:contentDescription="Map route"
                     android:paddingHorizontal="15dp"
+                    android:scaleType="fitXY"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
                 <LinearLayout
@@ -201,7 +203,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Activity Name"
-                        android:padding="15dp">
+                        android:padding="15dp"
+                        android:textColorHint="@color/black">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editTextRunName"
@@ -222,7 +225,8 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:hint="Notes"
-                        android:padding="15dp">
+                        android:padding="15dp"
+                        android:textColorHint="@color/black">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editTextRunNote"
@@ -262,6 +266,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
+                            android:contentDescription="Run rating bar"
                             android:numStars="5"
                             android:rating="@{viewmodel.currentRun.rating}"
                             android:stepSize="1" />
@@ -272,12 +277,30 @@
                         android:layout_height="1dp"
                         android:background="@color/gray_opac" />
 
-                    <ImageView
-                        android:id="@+id/imageViewRunPhoto"
-                        android:layout_width="405dp"
-                        android:layout_height="173dp"
-                        android:paddingHorizontal="15dp"
-                        tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="15dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="Activity photo"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <ImageButton
+                            android:id="@+id/imageButton"
+                            android:layout_width="match_parent"
+                            android:layout_height="300dp"
+                            android:background="@color/white"
+                            android:contentDescription="Run photo"
+                            android:scaleType="fitXY"
+                            tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                    </LinearLayout>
+
                 </LinearLayout>
 
             </LinearLayout>
