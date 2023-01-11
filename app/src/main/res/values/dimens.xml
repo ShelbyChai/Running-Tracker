@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <!-- Run Activity -->
+    <dimen name="runActivity_textSize_large">35sp</dimen>
+    <dimen name="runActivity_textSize_small">13sp</dimen>
+    <dimen name="runActivity_textSize_medium">25sp</dimen>
+</resources>

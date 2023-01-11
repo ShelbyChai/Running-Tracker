@@ -61,7 +61,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Duration" />
+                        android:text="@{viewmodel.formatTime(viewmodel.currentRun.duration)}" />
 
                     <View
                         android:layout_width="2dp"
@@ -73,7 +73,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Distance" />
+                        android:text="@{viewmodel.formatDistance(viewmodel.currentRun.distance)}" />
                 </LinearLayout>
 
                 <View
@@ -92,7 +92,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Calories" />
+                        android:text="@{String.valueOf(viewmodel.currentRun.calories)}" />
 
                     <View
                         android:layout_width="2dp"
@@ -104,7 +104,7 @@
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="Pace" />
+                        android:text="@{viewmodel.formatPace(viewmodel.currentRun.pace)}" />
                 </LinearLayout>
 
                 <View
@@ -133,7 +133,7 @@
                         android:layout_height="wrap_content"
                         android:layout_gravity="center"
                         android:numStars="5"
-                        android:rating="1"
+                        android:rating="@{viewmodel.currentRun.rating}"
                         android:stepSize="1" />
 
                     <com.google.android.material.textfield.TextInputLayout
@@ -146,7 +146,8 @@
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editTextRunName"
                             android:layout_width="match_parent"
-                            android:layout_height="wrap_content" />
+                            android:layout_height="wrap_content"
+                            android:text="@{viewmodel.currentRun.name}" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 
@@ -167,7 +168,7 @@
                             android:maxLines="10"
                             android:minLines="6"
                             android:scrollbars="vertical"
-                            android:text="text placeholder" />
+                            android:text="@{viewmodel.currentRun.note}" />
 
                     </com.google.android.material.textfield.TextInputLayout>
 

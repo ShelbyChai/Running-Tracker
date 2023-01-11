@@ -3,14 +3,16 @@ package com.example.runningtracker.viewmodel;
 import android.app.Application;
 
 import androidx.annotation.NonNull;
+import androidx.databinding.Bindable;
 import androidx.lifecycle.LiveData;
 
 import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.repository.MyRepository;
 
 public class RunRecordViewModel extends ObservableViewModel {
-    private Run runRecord;
     private String runID;
+    private LiveData<Run> currentRun;
+
 
     /* Repository */
     private final MyRepository myRepository;
@@ -23,20 +25,21 @@ public class RunRecordViewModel extends ObservableViewModel {
 
     /* Getter & Setter */
 
-    public Run getRunRecord() {
-        return runRecord;
-    }
-
-    public void setRunRecord(Run runRecord) {
-        this.runRecord = runRecord;
-    }
-
     public String getRunID() {
         return runID;
     }
 
     public void setRunID(String runID) {
         this.runID = runID;
+    }
+
+    @Bindable
+    public LiveData<Run> getCurrentRun() {
+        return currentRun;
+    }
+
+    public void setCurrentRun(LiveData<Run> currentRun) {
+        this.currentRun = currentRun;
     }
 
     /* Getter & Setter (Repository) */

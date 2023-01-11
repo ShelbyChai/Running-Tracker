@@ -32,16 +32,16 @@
                 android:gravity="center"
                 android:text="@{viewmodel.formatTime(viewmodel.totalDuration)}"
                 android:textColor="@color/black"
-                android:textSize="35sp"
+                android:textSize="@dimen/runActivity_textSize_large"
                 android:textStyle="bold" />
 
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="Duration"
+                android:text="@string/runActivity_duration_label"
                 android:textColor="@color/black_opac"
-                android:textSize="13sp" />
+                android:textSize="@dimen/runActivity_textSize_small" />
 
         </LinearLayout>
 
@@ -76,16 +76,16 @@
                     android:gravity="center"
                     android:text="@{viewmodel.formatDistance(viewmodel.totalDistance)}"
                     android:textColor="@color/black"
-                    android:textSize="25sp"
+                    android:textSize="@dimen/runActivity_textSize_medium"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Distance (km)"
+                    android:text="@string/runActivity_distance_label"
                     android:textColor="@color/black_opac"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/runActivity_textSize_small" />
             </LinearLayout>
 
             <View
@@ -107,16 +107,16 @@
                     android:gravity="center"
                     android:text="@{String.valueOf(viewmodel.totalCalories)}"
                     android:textColor="@color/black"
-                    android:textSize="25sp"
+                    android:textSize="@dimen/runActivity_textSize_medium"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Calories (cal)"
+                    android:text="@string/runActivity_calories_label"
                     android:textColor="@color/black_opac"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/runActivity_textSize_small" />
             </LinearLayout>
 
             <View
@@ -138,16 +138,16 @@
                     android:gravity="center"
                     android:text="@{viewmodel.formatPace(viewmodel.totalPace)}"
                     android:textColor="@color/black"
-                    android:textSize="25sp"
+                    android:textSize="@dimen/runActivity_textSize_medium"
                     android:textStyle="bold" />
 
                 <TextView
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:gravity="center"
-                    android:text="Avg Pace (min/km)"
+                    android:text="@string/runActivity_avg_pace_label"
                     android:textColor="@color/black_opac"
-                    android:textSize="13sp" />
+                    android:textSize="@dimen/runActivity_textSize_small" />
             </LinearLayout>
 
         </LinearLayout>
@@ -206,7 +206,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Pause"
+                android:text="@string/runActivity_button_pause"
                 app:backgroundTint="@color/black"
                 app:cornerRadius="0dp"
                 app:layout_constraintBottom_toBottomOf="parent"
@@ -217,7 +217,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Resume"
+                android:text="@string/runActivity_button_resume"
                 android:visibility="gone"
                 app:backgroundTint="@color/black"
                 app:cornerRadius="0dp"
@@ -235,7 +235,7 @@
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
-                android:text="Stop"
+                android:text="@string/runActivity_button_stop"
                 android:textColor="@color/black"
                 app:backgroundTint="@color/white"
                 app:cornerRadius="0dp"

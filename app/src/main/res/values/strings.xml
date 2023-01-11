@@ -5,4 +5,13 @@
     <string name="set_permissions_in_settings">Go to Settings -> Location -> App Permission
         -> Running Tracker -> App Permissions and grant access to Location.</string>
     <string name="notification_title">Running Activity</string>
+
+    <!-- Run Activity -->
+    <string name="runActivity_duration_label">Duration</string>
+    <string name="runActivity_distance_label">Distance (km)</string>
+    <string name="runActivity_calories_label">Calories (cal)</string>
+    <string name="runActivity_avg_pace_label">Avg Pace (min/km)</string>
+    <string name="runActivity_button_pause">Pause</string>
+    <string name="runActivity_button_resume">Resume</string>
+    <string name="runActivity_button_stop">Stop</string>
 </resources>
