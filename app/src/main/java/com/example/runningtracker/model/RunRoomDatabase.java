@@ -12,6 +12,7 @@ import androidx.sqlite.db.SupportSQLiteDatabase;
 import com.example.runningtracker.model.daos.RunDao;
 import com.example.runningtracker.model.entity.Run;
 
+import java.util.Calendar;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -68,9 +69,10 @@ public abstract class RunRoomDatabase extends RoomDatabase {
             Log.d("comp3018", "RoomDatabase onCreate");
             databaseWriteExecutor.execute(() -> {
                 RunDao runDao = instance.runDao();
-                runDao.deleteAll();
 
-                Run run = new Run(UUID.randomUUID().toString(), "Activity 1", 100, 1000, 10, 60);
+                String uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
+
+                Run run = new Run(uniqueRunID, "Activity 1", uniqueRunID, 100, 1000, 10, 60);
                 runDao.insert(run);
             });
         }

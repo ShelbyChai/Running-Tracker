@@ -77,15 +77,15 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
 
         // Buttons set onClick Listener
-        activityRunBinding.pauseTracker.setOnClickListener(view -> {
+        activityRunBinding.buttonPauseTracker.setOnClickListener(view -> {
             pauseRun();
             Toast.makeText(this, "Run Activity paused", Toast.LENGTH_SHORT).show();
         });
-        activityRunBinding.resumeTracker.setOnClickListener(view -> {
+        activityRunBinding.buttonResumeTracker.setOnClickListener(view -> {
             resumeRun();
             Toast.makeText(this, "Run Activity resumed", Toast.LENGTH_SHORT).show();
         });
-        activityRunBinding.stopTracker.setOnClickListener(view -> {
+        activityRunBinding.buttonStopTracker.setOnClickListener(view -> {
             finishRun();
             Toast.makeText(this, "Run Activity finished", Toast.LENGTH_SHORT).show();
         });
@@ -112,8 +112,8 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
             runViewModel.getTrackerBinder().pauseRunning();
 
             // Enable the visibility of resume button
-            activityRunBinding.pauseTracker.setVisibility(View.GONE);
-            activityRunBinding.resumeTracker.setVisibility(View.VISIBLE);
+            activityRunBinding.buttonPauseTracker.setVisibility(View.GONE);
+            activityRunBinding.buttonResumeTracker.setVisibility(View.VISIBLE);
         }
     }
 
@@ -123,8 +123,8 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
             runViewModel.getTrackerBinder().startRunning();
 
             // Enable the visibility of pause button
-            activityRunBinding.pauseTracker.setVisibility(View.VISIBLE);
-            activityRunBinding.resumeTracker.setVisibility(View.GONE);
+            activityRunBinding.buttonPauseTracker.setVisibility(View.VISIBLE);
+            activityRunBinding.buttonResumeTracker.setVisibility(View.GONE);
         }
     }
 
@@ -133,10 +133,11 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
             running = false;
             runViewModel.getTrackerBinder().stopRunning();
 
-            String uniqueRunID = UUID.randomUUID().toString();
+            String uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
 
             runViewModel.insert(new Run(uniqueRunID,
-                    String.valueOf(Calendar.getInstance().getTime()),
+                    "Activity",
+                    uniqueRunID,
                     runViewModel.getTotalDuration().getValue(),
                     runViewModel.getTotalDistance().getValue(),
                     runViewModel.getTotalPace().getValue(),
@@ -281,8 +282,8 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onSaveInstanceState(@NonNull Bundle outState) {
         super.onSaveInstanceState(outState);
 
-        outState.putInt(PAUSE_BUTTON_VISIBILITY, activityRunBinding.pauseTracker.getVisibility());
-        outState.putInt(RESUME_BUTTON_VISIBILITY, activityRunBinding.resumeTracker.getVisibility());
+        outState.putInt(PAUSE_BUTTON_VISIBILITY, activityRunBinding.buttonPauseTracker.getVisibility());
+        outState.putInt(RESUME_BUTTON_VISIBILITY, activityRunBinding.buttonResumeTracker.getVisibility());
     }
 
     // Restore the Pause & Resume buttons' visibility state
@@ -290,7 +291,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
 
-        activityRunBinding.pauseTracker.setVisibility(savedInstanceState.getInt(PAUSE_BUTTON_VISIBILITY));
-        activityRunBinding.resumeTracker.setVisibility(savedInstanceState.getInt(RESUME_BUTTON_VISIBILITY));
+        activityRunBinding.buttonPauseTracker.setVisibility(savedInstanceState.getInt(PAUSE_BUTTON_VISIBILITY));
+        activityRunBinding.buttonResumeTracker.setVisibility(savedInstanceState.getInt(RESUME_BUTTON_VISIBILITY));
     }
 }

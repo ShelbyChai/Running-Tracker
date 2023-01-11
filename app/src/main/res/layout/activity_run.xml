@@ -202,7 +202,7 @@
             app:layout_constraintStart_toStartOf="parent">
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/pauseTracker"
+                android:id="@+id/buttonPauseTracker"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -213,7 +213,7 @@
                 app:layout_constraintStart_toStartOf="parent" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/resumeTracker"
+                android:id="@+id/buttonResumeTracker"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
                 android:layout_weight="1"
@@ -230,7 +230,7 @@
                 android:layout_weight="0.3" />
 
             <com.google.android.material.button.MaterialButton
-                android:id="@+id/stopTracker"
+                android:id="@+id/buttonStopTracker"
                 style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                 android:layout_width="0dp"
                 android:layout_height="match_parent"

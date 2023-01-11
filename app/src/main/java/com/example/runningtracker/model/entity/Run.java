@@ -32,7 +32,7 @@ public class Run {
     private String name;
 
     @ColumnInfo(name = "rating")
-    private int rating;
+    private float rating;
 
     @ColumnInfo(name = "note")
     private String note;
@@ -44,9 +44,10 @@ public class Run {
     private String endDateTime;
 
 
-    public Run(@NonNull String runID, String name, int duration, int distance, double pace, int calories) {
+    public Run(@NonNull String runID, String name, String endDateTime, int duration, int distance, double pace, int calories) {
         this.runID = runID;
         this.name = name;
+        this.endDateTime = endDateTime;
         this.duration = duration;
         this.distance = distance;
         this.pace = pace;
@@ -84,7 +85,7 @@ public class Run {
         return mapSnapshot;
     }
 
-    public int getRating() {
+    public float getRating() {
         return rating;
     }
 

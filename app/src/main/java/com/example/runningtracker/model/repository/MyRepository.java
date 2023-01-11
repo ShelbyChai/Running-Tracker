@@ -18,7 +18,6 @@ public class MyRepository {
         // Retrieve a reference to the database and the Dao
         RunRoomDatabase db = RunRoomDatabase.getDatabase(application);
         runDao = db.runDao();
-
         allRuns = runDao.getRuns();
     }
 
@@ -33,6 +32,18 @@ public class MyRepository {
     public void insert(Run run) {
         RunRoomDatabase.databaseWriteExecutor.execute(() -> {
             runDao.insert(run);
+        });
+    }
+
+    public void update(String runID, String runName, float runRating, String runNote) {
+        RunRoomDatabase.databaseWriteExecutor.execute(() -> {
+            runDao.update(runID, runName, runRating, runNote);
+        });
+    }
+
+    public void delete(String runID) {
+        RunRoomDatabase.databaseWriteExecutor.execute(() -> {
+            runDao.delete(runID);
         });
     }
 }

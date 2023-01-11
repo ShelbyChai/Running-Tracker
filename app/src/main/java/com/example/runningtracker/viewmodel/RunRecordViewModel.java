@@ -33,8 +33,15 @@ public class RunRecordViewModel extends ObservableViewModel{
 
     /* Getter & Setter (Repository) */
 
-    @Bindable
     public LiveData<Run> getRun(String runID) {
         return myRepository.getRun(runID);
+    }
+
+    public void update(String runID, String runName, float runRating, String runNote) {
+        myRepository.update(runID, runName, runRating, runNote);
+    }
+
+    public void delete(String runID) {
+        myRepository.delete(runID);
     }
 }

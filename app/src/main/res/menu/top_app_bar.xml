@@ -3,7 +3,7 @@
     xmlns:app="http://schemas.android.com/apk/res-auto">
 
     <item
-        android:id="@+id/search"
+        android:id="@+id/deleteRunActivity"
         android:icon="@drawable/ic_action_delete"
         android:iconTint="@color/black"
         android:title="Delete"
