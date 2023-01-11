@@ -42,106 +42,166 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical">
+                android:orientation="vertical"
+                android:paddingVertical="15dp">
 
                 <ImageView
                     android:id="@+id/imageViewMapSnapshot"
                     android:layout_width="match_parent"
-                    android:layout_height="300dp"
+                    android:layout_height="200dp"
+                    android:paddingHorizontal="15dp"
                     tools:srcCompat="@tools:sample/backgrounds/scenic" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="15dp">
 
-                    <TextView
-                        android:id="@+id/textViewShowRunDuration"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{viewmodel.formatTime(viewmodel.currentRun.duration)}" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textViewShowRunDuration"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@{viewmodel.formatTime(viewmodel.currentRun.duration)}"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/runActivity_textSize_medium" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/runActivity_duration_label"
+                            android:textColor="@color/black_opac"
+                            android:textSize="@dimen/runActivity_textSize_small" />
+                    </LinearLayout>
 
                     <View
-                        android:layout_width="2dp"
+                        android:layout_width="1dp"
                         android:layout_height="match_parent"
+                        android:layout_marginVertical="12dp"
                         android:background="@color/gray_opac" />
 
-                    <TextView
-                        android:id="@+id/textViewShowRunDistance"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{viewmodel.formatDistance(viewmodel.currentRun.distance)}" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textViewShowRunDistance"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@{viewmodel.formatDistance(viewmodel.currentRun.distance)}"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/runActivity_textSize_medium" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/runActivity_distance_label"
+                            android:textColor="@color/black_opac"
+                            android:textSize="@dimen/runActivity_textSize_small" />
+                    </LinearLayout>
                 </LinearLayout>
 
                 <View
                     android:layout_width="match_parent"
-                    android:layout_height="2dp"
+                    android:layout_height="1dp"
                     android:background="@color/gray_opac" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="10dp">
+                    android:padding="15dp">
 
-                    <TextView
-                        android:id="@+id/textViewShowRunCalories"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{String.valueOf(viewmodel.currentRun.calories)}" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textViewShowRunCalories"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@{String.valueOf(viewmodel.currentRun.calories)}"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/runActivity_textSize_medium" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/runActivity_calories_label"
+                            android:textColor="@color/black_opac"
+                            android:textSize="@dimen/runActivity_textSize_small" />
+                    </LinearLayout>
 
                     <View
-                        android:layout_width="2dp"
+                        android:layout_width="1dp"
                         android:layout_height="match_parent"
+                        android:layout_marginVertical="12dp"
                         android:background="@color/gray_opac" />
 
-                    <TextView
-                        android:id="@+id/textViewShowRunPace"
+                    <LinearLayout
                         android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="1"
-                        android:text="@{viewmodel.formatPace(viewmodel.currentRun.pace)}" />
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/textViewShowRunPace"
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@{viewmodel.formatPace(viewmodel.currentRun.pace)}"
+                            android:textColor="@color/black"
+                            android:textSize="@dimen/runActivity_textSize_medium" />
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="match_parent"
+                            android:gravity="center"
+                            android:text="@string/runActivity_calories_label"
+                            android:textColor="@color/black_opac"
+                            android:textSize="@dimen/runActivity_textSize_small" />
+                    </LinearLayout>
+
+
                 </LinearLayout>
 
-                <View
+                <TextView
                     android:layout_width="match_parent"
-                    android:layout_height="4dp"
-                    android:background="@color/gray_opac" />
+                    android:layout_height="wrap_content"
+                    android:background="@color/gray_opac"
+                    android:padding="15dp"
+                    android:text="More info"
+                    android:textColor="@color/black_opac"
+                    android:textSize="16sp" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="vertical">
 
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="More info" />
-
-                    <TextView
-                        android:layout_width="match_parent"
-                        android:layout_height="wrap_content"
-                        android:text="How did this run feel?" />
-
-                    <RatingBar
-                        android:id="@+id/ratingBarRun"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_gravity="center"
-                        android:numStars="5"
-                        android:rating="@{viewmodel.currentRun.rating}"
-                        android:stepSize="1" />
-
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textLayoutRunName"
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Name">
+                        android:hint="Activity Name"
+                        android:padding="15dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editTextRunName"
@@ -151,12 +211,18 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_opac" />
+
 
                     <com.google.android.material.textfield.TextInputLayout
                         android:id="@+id/textLayoutRunNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Notes">
+                        android:hint="Notes"
+                        android:padding="15dp">
 
                         <com.google.android.material.textfield.TextInputEditText
                             android:id="@+id/editTextRunNote"
@@ -172,12 +238,45 @@
 
                     </com.google.android.material.textfield.TextInputLayout>
 
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_opac" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:orientation="vertical"
+                        android:padding="15dp">
+
+                        <TextView
+                            android:layout_width="match_parent"
+                            android:layout_height="wrap_content"
+                            android:text="How did this run feel?"
+                            android:textColor="@color/black"
+                            android:textSize="16sp"
+                            android:textStyle="bold" />
+
+                        <RatingBar
+                            android:id="@+id/ratingBarRun"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:layout_gravity="center"
+                            android:numStars="5"
+                            android:rating="@{viewmodel.currentRun.rating}"
+                            android:stepSize="1" />
+                    </LinearLayout>
+
+                    <View
+                        android:layout_width="match_parent"
+                        android:layout_height="1dp"
+                        android:background="@color/gray_opac" />
+
                     <ImageView
                         android:id="@+id/imageViewRunPhoto"
                         android:layout_width="405dp"
                         android:layout_height="173dp"
-                        tools:layout_editor_absoluteX="3dp"
-                        tools:layout_editor_absoluteY="16dp"
+                        android:paddingHorizontal="15dp"
                         tools:srcCompat="@tools:sample/backgrounds/scenic" />
                 </LinearLayout>
 
@@ -185,17 +284,24 @@
 
         </ScrollView>
 
+        <View
+            android:id="@+id/section2"
+            android:layout_width="match_parent"
+            android:layout_height="2dp"
+            android:background="@color/gray_opac" />
+
         <com.google.android.material.button.MaterialButton
             android:id="@+id/buttonSaveRunRecord"
-            style="@style/Widget.MaterialComponents.Button.OutlinedButton"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_margin="15dp"
             android:text="Save"
-            android:textColor="@color/black"
-            app:backgroundTint="@color/white"
+            android:textColor="@color/white"
+            app:backgroundTint="@color/black"
             app:cornerRadius="0dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:strokeColor="@color/black" />
+
     </LinearLayout>
 </layout>
