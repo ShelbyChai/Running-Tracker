@@ -21,14 +21,6 @@ public class MyRepository {
         allRuns = runDao.getRuns();
     }
 
-    public LiveData<List<Run>> getRuns() {
-        return allRuns;
-    }
-
-    public LiveData<Run> getRun(String runID) {
-        return runDao.getRun(runID);
-    }
-
     public void insert(Run run) {
         RunRoomDatabase.databaseWriteExecutor.execute(() -> {
             runDao.insert(run);
@@ -45,5 +37,13 @@ public class MyRepository {
         RunRoomDatabase.databaseWriteExecutor.execute(() -> {
             runDao.delete(runID);
         });
+    }
+
+    public LiveData<List<Run>> getRuns() {
+        return allRuns;
+    }
+
+    public LiveData<Run> getRun(String runID) {
+        return runDao.getRun(runID);
     }
 }
