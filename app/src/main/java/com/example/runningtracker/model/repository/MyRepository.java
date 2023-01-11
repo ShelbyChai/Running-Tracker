@@ -26,6 +26,10 @@ public class MyRepository {
         return allRuns;
     }
 
+    public LiveData<Run> getRun(String runID) {
+        return runDao.getRun(runID);
+    }
+
     public void insert(Run run) {
         RunRoomDatabase.databaseWriteExecutor.execute(() -> {
             runDao.insert(run);

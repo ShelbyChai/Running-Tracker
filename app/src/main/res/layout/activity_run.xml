@@ -177,8 +177,8 @@
             app:layout_constraintTop_toBottomOf="@id/section1"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            tools:context=".view.RunActivity"
             app:layout_constraintBottom_toTopOf="@id/section2"
+            tools:context=".view.RunActivity"
             tools:layout="@android:layout/simple_gallery_item" />
 
         <View

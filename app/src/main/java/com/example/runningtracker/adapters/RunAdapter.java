@@ -74,7 +74,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
 
         void bind(final Run run) {
             if (run != null) {
-                nameView.setText(run.getName());
+                nameView.setText(run.getRunID());
                 durationView.setText(String.valueOf(run.getDuration()));
                 distanceView.setText(String.valueOf(run.getDistance()));
                 paceView.setText(String.valueOf(run.getPace()));

@@ -17,6 +17,9 @@ public interface RunDao {
     @Insert(onConflict = OnConflictStrategy.IGNORE)
     void insert(Run run);
 
+    @Query("SELECT * FROM run_table WHERE runID = :runID")
+    LiveData<Run> getRun(String runID);
+
     @Query("SELECT * FROM run_table")
     Cursor getAllRun();
 

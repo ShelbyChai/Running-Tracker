@@ -7,12 +7,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Bitmap;
 import android.graphics.Color;
-import android.location.Location;
 import android.os.Bundle;
-import android.os.Looper;
-import android.os.Message;
 import android.os.SystemClock;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -29,12 +25,6 @@ import com.example.runningtracker.databinding.ActivityRunBinding;
 import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.service.TrackerService;
 import com.example.runningtracker.viewmodel.RunViewModel;
-import com.google.android.gms.location.FusedLocationProviderClient;
-import com.google.android.gms.location.LocationCallback;
-import com.google.android.gms.location.LocationRequest;
-import com.google.android.gms.location.LocationResult;
-import com.google.android.gms.location.LocationServices;
-import com.google.android.gms.location.Priority;
 import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
@@ -48,8 +38,12 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 
 public class RunActivity extends AppCompatActivity implements OnMapReadyCallback {
+    // Intent Key name
+    public final static String KEY_RUNID = "runID";
+
     // Key name to retrieve pause and resume buttons' visibility state for lifecycles
     private final String PAUSE_BUTTON_VISIBILITY = "Pause Visibility";
     private final String RESUME_BUTTON_VISIBILITY = "Resume Visibility";
@@ -57,7 +51,6 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
     private GoogleMap mMap;
     private RunViewModel runViewModel;
     private ActivityRunBinding activityRunBinding;
-
     private boolean running = true;
 
     @Override
@@ -140,12 +133,23 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
             running = false;
             runViewModel.getTrackerBinder().stopRunning();
 
-            runViewModel.insert(new Run(String.valueOf(Calendar.getInstance().getTime()),
+            String uniqueRunID = UUID.randomUUID().toString();
+
+            runViewModel.insert(new Run(uniqueRunID,
+                    String.valueOf(Calendar.getInstance().getTime()),
                     runViewModel.getTotalDuration().getValue(),
                     runViewModel.getTotalDistance().getValue(),
                     runViewModel.getTotalPace().getValue(),
                     runViewModel.getTotalCalories().getValue()));
 
+            Log.d("comp3018", "RunID in RunActivity: " + uniqueRunID);
+
+            Intent runRecordActivity = new Intent(this, RunRecordActivity.class);
+            Bundle bundle = new Bundle();
+            bundle.putString(KEY_RUNID, uniqueRunID);
+            runRecordActivity.putExtras(bundle);
+
+            startActivity(runRecordActivity);
             finish();
         }
     }

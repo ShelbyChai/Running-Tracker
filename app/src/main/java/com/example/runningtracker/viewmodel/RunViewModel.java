@@ -114,6 +114,7 @@ public class RunViewModel extends ObservableViewModel {
     }
 
     /* Getter & Setter */
+
     public TrackerService.MyBinder getTrackerBinder() {
         return trackerBinder;
     }
@@ -155,6 +156,7 @@ public class RunViewModel extends ObservableViewModel {
     }
 
     /* Getter & Setter (Repository) */
+
     public void insert(Run run) {
         myRepository.insert(run);
     }

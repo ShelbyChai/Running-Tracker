@@ -37,15 +37,13 @@ public class MainActivity extends AppCompatActivity {
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     public static final int RESULT_CODE_LOCATION_SETTINGS = 2;
 
-    private MainViewModel mainViewModel;
-
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Create viewModel and bind layout views to architecutre component
         ActivityMainBinding activityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
-        mainViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
+        MainViewModel mainViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
                         getInstance(this.getApplication())).get(MainViewModel.class);
 

@@ -7,9 +7,5 @@
     <item
         android:id="@+id/item2"
         android:enabled="true"
-        android:title="Activities List"/>
-    <item
-        android:id="@+id/item3"
-        android:enabled="true"
         android:title="Profile Analytic"/>
 </menu>
