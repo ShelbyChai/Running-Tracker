@@ -39,13 +39,17 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     public static final int RESULT_CODE_LOCATION_SETTINGS = 2;
 
+    private RunAdapter adapter;
+    private MainViewModel mainViewModel;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         // Create viewModel and bind layout views to architecutre component
         ActivityMainBinding activityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
-        MainViewModel mainViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
+
+        mainViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
                         getInstance(this.getApplication())).get(MainViewModel.class);
 
@@ -56,26 +60,23 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
 
         // Setup spinner adapter for Run filter functionality
-        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.run_filter, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.run_sort, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         activityMainBinding.spinnerRunFilter.setAdapter(arrayAdapter);
         activityMainBinding.spinnerRunFilter.setOnItemSelectedListener(this);
 
 
         // Setup recycler view adapter to display Run
-        final RunAdapter adapter = new RunAdapter(this, run -> {
+        adapter = new RunAdapter(this, run -> {
             Intent intent = new Intent(MainActivity.this, RunRecordActivity.class);
             intent.putExtra(RunActivity.KEY_RUNID, run.getRunID());
             startActivity(intent);
         });
         activityMainBinding.recyclerView.setAdapter(adapter);
         activityMainBinding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
-
-
-        // Observe
-        mainViewModel.getAllRuns().observe(this, adapter::setData);
     }
 
+    // Check Location Permission and if GPS is enabled
     public void onClickStartRunActivity(View view) {
         locationPermissionRequest.launch(new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -91,8 +92,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(runActivity);
     }
 
+    public void onClickStartStatisticActivity(View view) {
+        Log.d("comp3018", "MainActivity startStatistic Activity");
+    }
+
     /*
-     * Check if required permission is enabled.
+     * Check and prompt for location permission.
      * */
     ActivityResultLauncher<String[]> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts
@@ -199,11 +204,33 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    /*
+    * Set the sorting/filtering method of recycler view.
+    * */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String selectedFilter = adapterView.getItemAtPosition(i).toString();
 
-        Toast.makeText(getApplicationContext(), selectedFilter, Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), "Sort runs by " + selectedFilter, Toast.LENGTH_SHORT).show();
+
+        switch(selectedFilter) {
+            // Sort the runs by most recent
+            case "Recent":
+                mainViewModel.getAllRecentRuns().observe(this, adapter::setData);
+                break;
+            // Sort the runs by long distance
+            case"Distance":
+                mainViewModel.getAllDistanceRuns().observe(this, adapter::setData);
+                break;
+            // Sort the runs by low pace
+            case "Pace":
+                mainViewModel.getAllPaceRuns().observe(this, adapter::setData);
+                break;
+            // Sort the runs by high calories burned
+            case "Calories":
+                mainViewModel.getAllCaloriesRuns().observe(this, adapter::setData);
+                break;
+        }
     }
 
     @Override

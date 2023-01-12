@@ -26,9 +26,25 @@ public interface RunDao {
     @Query("DELETE FROM run_table WHERE runID = :runID")
     void delete(String runID);
 
+    // Query the specific run record
     @Query("SELECT * FROM run_table WHERE runID = :runID")
     LiveData<Run> getRun(String runID);
 
+    // General query of the run records
     @Query("SELECT * FROM run_table")
     LiveData<List<Run>> getRuns();
+
+    // Query run records by recent time
+    @Query("SELECT * FROM run_table ORDER BY datetime(endDateTime) DESC")
+    LiveData<List<Run>> getRecentRuns();
+
+    // Query run records by longest distance
+    @Query("SELECT * FROM run_table ORDER BY distance DESC")
+    LiveData<List<Run>> getDistanceRuns();
+
+    @Query("SELECT * FROM run_table ORDER BY pace ASC")
+    LiveData<List<Run>> getPaceRuns();
+
+    @Query("SELECT * FROM run_table ORDER BY calories DESC")
+    LiveData<List<Run>> getCaloriesRuns();
 }

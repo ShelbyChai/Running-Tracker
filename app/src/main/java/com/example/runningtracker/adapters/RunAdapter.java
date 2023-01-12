@@ -7,13 +7,11 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
-import androidx.databinding.Bindable;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.runningtracker.Helper.FormatterClass;
+import com.example.runningtracker.Helper.RunHelper;
 import com.example.runningtracker.R;
 import com.example.runningtracker.model.entity.Run;
-import com.example.runningtracker.viewmodel.ObservableViewModel;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +20,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
     public interface OnItemClickListener {
         void onItemClick(Run run);
     }
+
     private List<Run> data;
     private Context context;
     private final LayoutInflater layoutInflater;
@@ -81,8 +80,8 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
         void bind(final Run run, final OnItemClickListener listener) {
             if (run != null) {
                 nameView.setText(run.getName());
-                distanceView.setText(FormatterClass.formatDistance(run.getDistance()) + " km");
-                durationView.setText(FormatterClass.formatTime(run.getDuration()));
+                distanceView.setText(RunHelper.formatDistance(run.getDistance()) + " km");
+                durationView.setText(RunHelper.formatTime(run.getDuration()));
                 dateTimeView.setText(run.getDateTimeFormatted());
             }
 

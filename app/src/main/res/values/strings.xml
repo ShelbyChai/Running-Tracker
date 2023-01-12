@@ -26,9 +26,13 @@
     <string name="runRecordActivity_runImage_description">Run photo</string>
     <string name="runRecordActivity_button_upload_image">Upload Image</string>
     <string name="runRecordActivity_button_save">Save</string>
+    <string name="mainActivity_activities_title">ACTIVITIES</string>
+    <string name="mainActivity_textView_sort_by">Sort By:</string>
+    <string name="mainActivity_button_statistic">Statistic</string>
+    <string name="mainActivity_button_start_running">Start Running</string>
 
     <!-- Spinner String Array -->
-    <string-array name="run_filter">
+    <string-array name="run_sort">
         <item>Recent</item>
         <item>Distance</item>
         <item>Pace</item>

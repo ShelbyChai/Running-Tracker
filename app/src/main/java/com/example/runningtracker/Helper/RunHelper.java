@@ -2,7 +2,7 @@ package com.example.runningtracker.Helper;
 
 import android.annotation.SuppressLint;
 
-public class FormatterClass {
+public class RunHelper {
 
     @SuppressLint("DefaultLocale")
     public static String formatTime(int duration) {

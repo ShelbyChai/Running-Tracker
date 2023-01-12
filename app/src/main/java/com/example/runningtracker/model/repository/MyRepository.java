@@ -12,13 +12,19 @@ import java.util.List;
 
 public class MyRepository {
     private final RunDao runDao;
-    private final LiveData<List<Run>> allRuns;
+    private final LiveData<List<Run>> allRecentRuns;
+    private final LiveData<List<Run>> allDistanceRuns;
+    private final LiveData<List<Run>> allPaceRuns;
+    private final LiveData<List<Run>> allCaloriesRuns;
 
     public MyRepository(Application application) {
         // Retrieve a reference to the database and the Dao
         RunRoomDatabase db = RunRoomDatabase.getDatabase(application);
         runDao = db.runDao();
-        allRuns = runDao.getRuns();
+        allRecentRuns = runDao.getRecentRuns();
+        allDistanceRuns = runDao.getDistanceRuns();
+        allPaceRuns = runDao.getPaceRuns();
+        allCaloriesRuns = runDao.getCaloriesRuns();
     }
 
     public void insert(Run run) {
@@ -39,11 +45,23 @@ public class MyRepository {
         });
     }
 
-    public LiveData<List<Run>> getRuns() {
-        return allRuns;
-    }
-
     public LiveData<Run> getRun(String runID) {
         return runDao.getRun(runID);
+    }
+
+    public LiveData<List<Run>> getRecentRuns() {
+        return allRecentRuns;
+    }
+
+    public LiveData<List<Run>> getDistanceRuns() {
+        return allDistanceRuns;
+    }
+
+    public LiveData<List<Run>> getPaceRuns() {
+        return allPaceRuns;
+    }
+
+    public LiveData<List<Run>> getCaloriesRuns() {
+        return allCaloriesRuns;
     }
 }

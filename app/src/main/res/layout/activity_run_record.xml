@@ -181,7 +181,7 @@
                             android:layout_width="match_parent"
                             android:layout_height="match_parent"
                             android:gravity="center"
-                            android:text="@string/runActivity_calories_label"
+                            android:text="@string/runActivity_avg_pace_label"
                             android:textColor="@color/black_opac"
                             android:textSize="@dimen/runActivity_textSize_small" />
                     </LinearLayout>
