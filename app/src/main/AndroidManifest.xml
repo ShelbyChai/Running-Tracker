@@ -1,15 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
-
     <!-- For map display -->
-    <uses-permission android:name="android.permission.INTERNET" />
-    <!-- For uploading images for run activity -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <!-- Types of location access: Accuracy -->
+    <uses-permission android:name="android.permission.INTERNET" /> <!-- For uploading images for run activity -->
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Types of location access: Accuracy -->
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_BACKGROUND_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
 
     <application
@@ -30,22 +26,6 @@
             android:value="AIzaSyDpp8isYxspmB-QztIj-1h3Or0cRi3X7pc" />
 
         <activity
-            android:name=".view.RunRecordActivity"
-            android:exported="true"
-            android:launchMode="singleTask">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
-            android:name=".view.RunActivity"
-            android:exported="false"
-            android:launchMode="singleTask">
-            <meta-data
-                android:name="android.app.lib_name"
-                android:value="" />
-        </activity>
-        <activity
             android:name=".view.MainActivity"
             android:exported="true"
             android:launchMode="singleTask">
@@ -55,6 +35,33 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
 
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".view.RunActivity"
+            android:exported="false"
+            android:launchMode="singleTask">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".view.RunRecordActivity"
+            android:exported="true"
+            android:launchMode="singleTask">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+
+        <activity
+            android:name=".view.StatisticsActivity"
+            android:exported="false"
+            android:launchMode="singleTask">
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

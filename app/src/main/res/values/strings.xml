@@ -30,6 +30,7 @@
     <string name="mainActivity_textView_sort_by">Sort By:</string>
     <string name="mainActivity_button_statistic">Statistic</string>
     <string name="mainActivity_button_start_running">Start Running</string>
+    <string name="runActivity_app_bar_title">Run</string>
 
     <!-- Spinner String Array -->
     <string-array name="run_sort">

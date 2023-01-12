@@ -27,7 +27,7 @@
                 android:background="@color/white"
                 app:menu="@menu/top_app_bar"
                 app:navigationIcon="@drawable/ic_action_back"
-                app:title="Run"
+                app:title="@string/runActivity_app_bar_title"
                 app:titleTextColor="@color/black" />
 
         </com.google.android.material.appbar.AppBarLayout>

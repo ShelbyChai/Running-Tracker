@@ -11,7 +11,6 @@ import com.example.runningtracker.model.repository.MyRepository;
 import java.util.List;
 
 public class MainViewModel extends ObservableViewModel {
-    private final MyRepository myRepository;
     private final LiveData<List<Run>> allRecentRuns;
     private final LiveData<List<Run>> allDistanceRuns;
     private final LiveData<List<Run>> allPaceRuns;
@@ -20,7 +19,7 @@ public class MainViewModel extends ObservableViewModel {
     public MainViewModel(@NonNull Application application) {
         super(application);
 
-        myRepository = new MyRepository(application);
+        MyRepository myRepository = new MyRepository(application);
         allRecentRuns = myRepository.getRecentRuns();
         allDistanceRuns = myRepository.getDistanceRuns();
         allPaceRuns = myRepository.getPaceRuns();

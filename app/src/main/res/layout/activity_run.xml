@@ -30,7 +30,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:gravity="center"
-                android:text="@{viewmodel.formatTime(viewmodel.totalDuration)}"
+                android:text="@{viewmodel.formatTime(viewmodel.runDuration)}"
                 android:textColor="@color/black"
                 android:textSize="@dimen/runActivity_textSize_large"
                 android:textStyle="bold" />
@@ -74,7 +74,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@{viewmodel.formatDistance(viewmodel.totalDistance)}"
+                    android:text="@{viewmodel.formatDistance(viewmodel.runDistance)}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/runActivity_textSize_medium"
                     android:textStyle="bold" />
@@ -105,7 +105,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@{String.valueOf(viewmodel.totalCalories)}"
+                    android:text="@{String.valueOf(viewmodel.runCalories)}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/runActivity_textSize_medium"
                     android:textStyle="bold" />
@@ -136,7 +136,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:gravity="center"
-                    android:text="@{viewmodel.formatPace(viewmodel.totalPace)}"
+                    android:text="@{viewmodel.formatPace(viewmodel.runPace)}"
                     android:textColor="@color/black"
                     android:textSize="@dimen/runActivity_textSize_medium"
                     android:textStyle="bold" />

@@ -10,7 +10,6 @@ import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.databinding.Bindable;
 import androidx.lifecycle.MutableLiveData;
 
@@ -27,7 +26,6 @@ import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.ByteArrayOutputStream;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
@@ -43,13 +41,12 @@ public class RunViewModel extends ObservableViewModel {
     private GoogleMap mMap;
     private LatLng latLng;
     private boolean running;
-    private String uniqueRunID;
 
     /* Bindable Object */
-    private final MutableLiveData<Integer> totalDuration = new MutableLiveData<>(0);
-    private final MutableLiveData<Integer> totalDistance = new MutableLiveData<>(0);
-    private final MutableLiveData<Double> totalPace = new MutableLiveData<>((double) 0);
-    private final MutableLiveData<Integer> totalCalories = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> runDuration = new MutableLiveData<>(0);
+    private final MutableLiveData<Integer> runDistance = new MutableLiveData<>(0);
+    private final MutableLiveData<Double> runPace = new MutableLiveData<>((double) 0);
+    private final MutableLiveData<Integer> runCalories = new MutableLiveData<>(0);
 
     private final MyRepository myRepository;
 
@@ -123,15 +120,15 @@ public class RunViewModel extends ObservableViewModel {
                     calories = (int) (kilometers * 60);
 
                     // 6
-                    totalDuration.setValue(duration);
-                    totalDistance.setValue(distance);
-                    totalPace.setValue(pace);
-                    totalCalories.setValue(calories);
+                    runDuration.setValue(duration);
+                    runDistance.setValue(distance);
+                    runPace.setValue(pace);
+                    runCalories.setValue(calories);
 
-                    notifyPropertyChanged(BR.totalDuration);
-                    notifyPropertyChanged(BR.totalDistance);
-                    notifyPropertyChanged(BR.totalPace);
-                    notifyPropertyChanged(BR.totalCalories);
+                    notifyPropertyChanged(BR.runDuration);
+                    notifyPropertyChanged(BR.runDistance);
+                    notifyPropertyChanged(BR.runPace);
+                    notifyPropertyChanged(BR.runCalories);
                 }
 
                 prevLocation = location;
@@ -166,7 +163,7 @@ public class RunViewModel extends ObservableViewModel {
         @Override
         public void onSnapshotReady(Bitmap snapshot) {
             bitmap = snapshot;
-            uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
+            String uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
 
             String endTime = formatter.format(curDate);
             String dateTimeFormatted = formatterName.format(curDate);
@@ -187,10 +184,10 @@ public class RunViewModel extends ObservableViewModel {
                     "Run Activity",
                     endTime,
                     dateTimeFormatted,
-                    totalDuration.getValue(),
-                    totalDistance.getValue(),
-                    totalPace.getValue(),
-                    totalCalories.getValue(),
+                    runDuration.getValue(),
+                    runDistance.getValue(),
+                    runPace.getValue(),
+                    runCalories.getValue(),
                     mapByteArray));
         }
     };
@@ -258,23 +255,23 @@ public class RunViewModel extends ObservableViewModel {
     }
 
     @Bindable
-    public MutableLiveData<Integer> getTotalDistance() {
-        return totalDistance;
+    public MutableLiveData<Integer> getRunDistance() {
+        return runDistance;
     }
 
     @Bindable
-    public MutableLiveData<Integer> getTotalDuration() {
-        return totalDuration;
+    public MutableLiveData<Integer> getRunDuration() {
+        return runDuration;
     }
 
     @Bindable
-    public MutableLiveData<Double> getTotalPace() {
-        return totalPace;
+    public MutableLiveData<Double> getRunPace() {
+        return runPace;
     }
 
     @Bindable
-    public MutableLiveData<Integer> getTotalCalories() {
-        return totalCalories;
+    public MutableLiveData<Integer> getRunCalories() {
+        return runCalories;
     }
 
     /* Getter & Setter (Repository) */

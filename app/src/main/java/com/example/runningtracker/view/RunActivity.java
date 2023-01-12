@@ -155,8 +155,8 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
     private Notification updateNotificationContent() {
         runViewModel.getTrackerBinder().getNotificationBuilder().
                 setContentTitle(getString(R.string.notification_title)).
-                setContentText("Duration: " + runViewModel.formatTime(runViewModel.getTotalDuration().getValue())
-                        + ", Distance: " + runViewModel.formatDistance(runViewModel.getTotalDistance().getValue()) + " km");
+                setContentText("Duration: " + runViewModel.formatTime(runViewModel.getRunDuration().getValue())
+                        + ", Distance: " + runViewModel.formatDistance(runViewModel.getRunDistance().getValue()) + " km");
 
         return runViewModel.getTrackerBinder().getNotificationBuilder().build();
     }

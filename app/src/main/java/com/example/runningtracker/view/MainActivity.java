@@ -88,12 +88,13 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public void startRunActivity() {
         Log.d("comp3018", "MainActivity startRunActivity");
         Intent runActivity = new Intent(MainActivity.this, RunActivity.class);
-
         startActivity(runActivity);
     }
 
     public void onClickStartStatisticActivity(View view) {
         Log.d("comp3018", "MainActivity startStatistic Activity");
+        Intent statisticActivity = new Intent(MainActivity.this, StatisticsActivity.class);
+        startActivity(statisticActivity);
     }
 
     /*
@@ -198,8 +199,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 if (resultCode != 0) {
                     startRunActivity();
                 }
-                break;
-            default:
                 break;
         }
     }
