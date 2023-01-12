@@ -52,9 +52,16 @@ public class MainActivity extends AppCompatActivity {
         setContentView(activityMainBinding.getRoot());
         activityMainBinding.setViewmodel(mainViewModel);
 
+
         // RecyclerView
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        final RunAdapter adapter = new RunAdapter(this);
+        final RunAdapter adapter = new RunAdapter(this, run -> {
+            Log.d("comp3018", "Item:" + run.getName());
+
+            Intent intent = new Intent(MainActivity.this, RunRecordActivity.class);
+            intent.putExtra(RunActivity.KEY_RUNID, run.getRunID());
+            startActivity(intent);
+        });
 
         recyclerView.setAdapter(adapter);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));

@@ -16,13 +16,18 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
+    public interface OnItemClickListener {
+        void onItemClick(Run run);
+    }
     private List<Run> data;
     private Context context;
     private final LayoutInflater layoutInflater;
+    private final OnItemClickListener listener;
 
-    public RunAdapter(Context context) {
+    public RunAdapter(Context context, OnItemClickListener listener) {
         this.data = new ArrayList<>();
         this.context = context;
+        this.listener = listener;
         this.layoutInflater = (LayoutInflater)
                 context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
     }
@@ -36,7 +41,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
 
     @Override
     public void onBindViewHolder(RunViewHolder holder, int position) {
-        holder.bind(data.get(position));
+        holder.bind(data.get(position), listener);
     }
 
     @Override
@@ -72,7 +77,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
             caloriesView = itemView.findViewById(R.id.caloriesView);
         }
 
-        void bind(final Run run) {
+        void bind(final Run run, final OnItemClickListener listener) {
             if (run != null) {
                 nameView.setText(run.getName());
                 durationView.setText(String.valueOf(run.getDuration()));
@@ -80,6 +85,12 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
                 paceView.setText(String.valueOf(run.getPace()));
                 caloriesView.setText(String.valueOf(run.getCalories()));
             }
+
+            itemView.setOnClickListener(new View.OnClickListener() {
+                @Override public void onClick(View v) {
+                    listener.onItemClick(run);
+                }
+            });
         }
     }
 }

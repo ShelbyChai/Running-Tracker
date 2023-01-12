@@ -12,9 +12,9 @@ import com.example.runningtracker.model.repository.MyRepository;
 
 public class RunRecordViewModel extends ObservableViewModel {
     /* Instantiate required variables */
-    private final MyRepository myRepository;
     private String runID;
     private LiveData<Run> currentRun;
+    private final MyRepository myRepository;
 
     public RunRecordViewModel(@NonNull Application application) {
         super(application);
