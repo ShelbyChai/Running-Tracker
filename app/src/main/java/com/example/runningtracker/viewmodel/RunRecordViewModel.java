@@ -1,6 +1,7 @@
 package com.example.runningtracker.viewmodel;
 
 import android.app.Application;
+import android.graphics.Bitmap;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
@@ -10,12 +11,10 @@ import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.repository.MyRepository;
 
 public class RunRecordViewModel extends ObservableViewModel {
+    /* Instantiate required variables */
+    private final MyRepository myRepository;
     private String runID;
     private LiveData<Run> currentRun;
-
-
-    /* Repository */
-    private final MyRepository myRepository;
 
     public RunRecordViewModel(@NonNull Application application) {
         super(application);
@@ -44,8 +43,8 @@ public class RunRecordViewModel extends ObservableViewModel {
 
     /* Getter & Setter (Repository) */
 
-    public void update(String runID, String runName, float runRating, String runNote) {
-        myRepository.update(runID, runName, runRating, runNote);
+    public void update(String runID, String runName, float runRating, String runNote, byte[] runPhoto) {
+        myRepository.update(runID, runName, runRating, runNote, runPhoto);
     }
 
     public void delete(String runID) {

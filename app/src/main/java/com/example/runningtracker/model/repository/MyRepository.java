@@ -27,9 +27,9 @@ public class MyRepository {
         });
     }
 
-    public void update(String runID, String runName, float runRating, String runNote) {
+    public void update(String runID, String runName, float runRating, String runNote, byte[] runPhoto) {
         RunRoomDatabase.databaseWriteExecutor.execute(() -> {
-            runDao.update(runID, runName, runRating, runNote);
+            runDao.update(runID, runName, runRating, runNote, runPhoto);
         });
     }
 

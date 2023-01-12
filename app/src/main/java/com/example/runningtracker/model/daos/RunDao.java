@@ -18,9 +18,10 @@ public interface RunDao {
     @Query("UPDATE run_table SET " +
             "name = :runName," +
             "rating = :runRating," +
-            "note = :runNote " +
+            "note = :runNote," +
+            "photo = :photo " +
             "WHERE runID = :runID")
-    void update(String runID, String runName, float runRating, String runNote);
+    void update(String runID, String runName, float runRating, String runNote, byte[] photo);
 
     @Query("DELETE FROM run_table WHERE runID = :runID")
     void delete(String runID);
