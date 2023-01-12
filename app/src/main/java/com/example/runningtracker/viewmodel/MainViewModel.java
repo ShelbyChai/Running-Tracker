@@ -26,7 +26,4 @@ public class MainViewModel extends ObservableViewModel {
         return allRuns;
     }
 
-    public void insert(Run run) {
-        myRepository.insert(run);
-    }
 }

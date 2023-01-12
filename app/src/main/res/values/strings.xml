@@ -26,4 +26,12 @@
     <string name="runRecordActivity_runImage_description">Run photo</string>
     <string name="runRecordActivity_button_upload_image">Upload Image</string>
     <string name="runRecordActivity_button_save">Save</string>
+
+    <!-- Spinner String Array -->
+    <string-array name="run_filter">
+        <item>Recent</item>
+        <item>Distance</item>
+        <item>Pace</item>
+        <item>Calories</item>
+    </string-array>
 </resources>

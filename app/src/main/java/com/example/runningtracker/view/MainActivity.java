@@ -7,6 +7,8 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -18,7 +20,6 @@ import androidx.core.app.ActivityCompat;
 import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.runningtracker.R;
 import com.example.runningtracker.adapters.RunAdapter;
@@ -33,7 +34,8 @@ import com.google.android.gms.location.Priority;
 import com.google.android.gms.location.SettingsClient;
 import com.google.android.gms.tasks.Task;
 
-public class MainActivity extends AppCompatActivity {
+
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener {
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     public static final int RESULT_CODE_LOCATION_SETTINGS = 2;
 
@@ -53,27 +55,29 @@ public class MainActivity extends AppCompatActivity {
         activityMainBinding.setViewmodel(mainViewModel);
 
 
-        // RecyclerView
-        RecyclerView recyclerView = findViewById(R.id.recyclerView);
-        final RunAdapter adapter = new RunAdapter(this, run -> {
-            Log.d("comp3018", "RunID:" + run.getRunID());
-            Log.d("comp3018", "RunDateTime:" + run.getEndDateTime());
-            Log.d("comp3018", "RunDateTime:" + run.getDateTimeFormatted());
+        // Setup spinner adapter for Run filter functionality
+        ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.run_filter, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
+        arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        activityMainBinding.spinnerRunFilter.setAdapter(arrayAdapter);
+        activityMainBinding.spinnerRunFilter.setOnItemSelectedListener(this);
 
+
+        // Setup recycler view adapter to display Run
+        final RunAdapter adapter = new RunAdapter(this, run -> {
             Intent intent = new Intent(MainActivity.this, RunRecordActivity.class);
             intent.putExtra(RunActivity.KEY_RUNID, run.getRunID());
             startActivity(intent);
         });
+        activityMainBinding.recyclerView.setAdapter(adapter);
+        activityMainBinding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
-        recyclerView.setAdapter(adapter);
-        recyclerView.setLayoutManager(new LinearLayoutManager(this));
 
         // Observe
         mainViewModel.getAllRuns().observe(this, adapter::setData);
     }
 
     public void onClickStartRunActivity(View view) {
-        locationPermissionRequest.launch(new String[] {
+        locationPermissionRequest.launch(new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
                 Manifest.permission.INTERNET
         });
@@ -193,6 +197,17 @@ public class MainActivity extends AppCompatActivity {
             default:
                 break;
         }
+    }
+
+    @Override
+    public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
+        String selectedFilter = adapterView.getItemAtPosition(i).toString();
+
+        Toast.makeText(getApplicationContext(), selectedFilter, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void onNothingSelected(AdapterView<?> adapterView) {
     }
 
     @Override

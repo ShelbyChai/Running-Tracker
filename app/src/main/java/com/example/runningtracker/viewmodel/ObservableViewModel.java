@@ -11,7 +11,6 @@ import androidx.lifecycle.AndroidViewModel;
 public class ObservableViewModel extends AndroidViewModel implements Observable {
 
     PropertyChangeRegistry callbacks = new PropertyChangeRegistry();
-
     public ObservableViewModel(@NonNull Application application) {
         super(application);
     }
