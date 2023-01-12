@@ -56,7 +56,9 @@ public class MainActivity extends AppCompatActivity {
         // RecyclerView
         RecyclerView recyclerView = findViewById(R.id.recyclerView);
         final RunAdapter adapter = new RunAdapter(this, run -> {
-            Log.d("comp3018", "Item:" + run.getName());
+            Log.d("comp3018", "RunID:" + run.getRunID());
+            Log.d("comp3018", "RunDateTime:" + run.getEndDateTime());
+            Log.d("comp3018", "RunDateTime:" + run.getDateTimeFormatted());
 
             Intent intent = new Intent(MainActivity.this, RunRecordActivity.class);
             intent.putExtra(RunActivity.KEY_RUNID, run.getRunID());

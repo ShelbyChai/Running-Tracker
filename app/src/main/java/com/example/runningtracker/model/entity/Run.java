@@ -13,8 +13,14 @@ public class Run {
     @ColumnInfo(name = "runID")
     private String runID;
 
-    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
-    private byte[] mapSnapshot;
+    @ColumnInfo(name = "name")
+    private String name;
+
+    @ColumnInfo(name = "dateTimeFormatted")
+    private final String dateTimeFormatted;
+
+    @ColumnInfo(name = "endDateTime")
+    private final String endDateTime;
 
     @ColumnInfo(name = "duration")
     private int duration;
@@ -28,9 +34,6 @@ public class Run {
     @ColumnInfo(name = "pace")
     private double pace;
 
-    @ColumnInfo(name = "name")
-    private String name;
-
     @ColumnInfo(name = "rating")
     private float rating;
 
@@ -40,18 +43,20 @@ public class Run {
     @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
     private byte[] photo;
 
-    @ColumnInfo(name = "endDateTime")
-    private String endDateTime;
+    @ColumnInfo(typeAffinity = ColumnInfo.BLOB)
+    private byte[] mapSnapshot;
 
 
-    public Run(@NonNull String runID, String name, String endDateTime, int duration, int distance, double pace, int calories) {
+    public Run(@NonNull String runID, String name, String endDateTime, String dateTimeFormatted, int duration, int distance, double pace, int calories, byte[] mapSnapshot) {
         this.runID = runID;
         this.name = name;
         this.endDateTime = endDateTime;
+        this.dateTimeFormatted = dateTimeFormatted;
         this.duration = duration;
         this.distance = distance;
         this.pace = pace;
         this.calories = calories;
+        this.mapSnapshot = mapSnapshot;
     }
 
     /* Getters & Setters */
@@ -101,10 +106,6 @@ public class Run {
         return endDateTime;
     }
 
-    public void setRunId(@NonNull String runID) {
-        this.runID = runID;
-    }
-
     public void setMapSnapshot(byte[] mapSnapshot) {
         this.mapSnapshot = mapSnapshot;
     }
@@ -141,8 +142,9 @@ public class Run {
         this.photo = photo;
     }
 
-    public void setEndDateTime(String endDateTime) {
-        this.endDateTime = endDateTime;
+    public String getDateTimeFormatted() {
+        return dateTimeFormatted;
     }
+
 
 }

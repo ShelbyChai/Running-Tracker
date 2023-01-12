@@ -14,4 +14,16 @@
     <string name="runActivity_button_pause">Pause</string>
     <string name="runActivity_button_resume">Resume</string>
     <string name="runActivity_button_stop">Stop</string>
+
+    <!-- Run Record Activity -->
+    <string name="runRecordActivity_map_description">Map route</string>
+    <string name="runRecordActivity_textView_more_info">More info</string>
+    <string name="runRecordActivity_textHint_activity_name">Activity Name</string>
+    <string name="runRecordActivity_textHint_notes">Notes</string>
+    <string name="runRecordActivity_textView_rating">How did this run feel?</string>
+    <string name="runRecord_ratingBar_description">Run rating bar</string>
+    <string name="runRecordActivity_textView_activity_photo">Activity photo</string>
+    <string name="runRecordActivity_runImage_description">Run photo</string>
+    <string name="runRecordActivity_button_upload_image">Upload Image</string>
+    <string name="runRecordActivity_button_save">Save</string>
 </resources>

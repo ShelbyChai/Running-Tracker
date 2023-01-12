@@ -38,7 +38,7 @@ public abstract class RunRoomDatabase extends RoomDatabase {
             synchronized (RunRoomDatabase.class) {
                 if (instance == null) {
                     instance = Room.databaseBuilder(context.getApplicationContext(), RunRoomDatabase.class, "run_database").fallbackToDestructiveMigration()
-                            .addCallback(createCallback)
+//                            .addCallback(createCallback)
                             // This is to migrate the database when the version is incremented
                             // else an error would occured
                             .fallbackToDestructiveMigration()
@@ -61,22 +61,22 @@ public abstract class RunRoomDatabase extends RoomDatabase {
      * Pre-populate the database by adding some entities when the database in created using callback.
      * This function is only called when the database is first created!
      * */
-    private static final RoomDatabase.Callback createCallback = new RoomDatabase.Callback() {
-        @Override
-        public void onCreate(@NonNull SupportSQLiteDatabase db) {
-            super.onCreate(db);
-
-            Log.d("comp3018", "RoomDatabase onCreate");
-            databaseWriteExecutor.execute(() -> {
-                RunDao runDao = instance.runDao();
-
-                String uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
-
-                Run run = new Run(uniqueRunID, "Activity 1", uniqueRunID, 100, 1000, 10, 60);
-                runDao.insert(run);
-            });
-        }
-    };
+//    private static final RoomDatabase.Callback createCallback = new RoomDatabase.Callback() {
+//        @Override
+//        public void onCreate(@NonNull SupportSQLiteDatabase db) {
+//            super.onCreate(db);
+//
+//            Log.d("comp3018", "RoomDatabase onCreate");
+//            databaseWriteExecutor.execute(() -> {
+//                RunDao runDao = instance.runDao();
+//
+//                String uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
+//
+//                Run run = new Run(uniqueRunID, "Activity 1", uniqueRunID, 100, 1000, 10, 60);
+//                runDao.insert(run);
+//            });
+//        }
+//    };
 
     // Abstract method to retrieve each of the Dao objects
     public abstract RunDao runDao();

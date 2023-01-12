@@ -4,4 +4,5 @@
     <dimen name="runActivity_textSize_large">35sp</dimen>
     <dimen name="runActivity_textSize_small">13sp</dimen>
     <dimen name="runActivity_textSize_medium">25sp</dimen>
+    <dimen name="runRecordActivity_default_padding">15dp</dimen>
 </resources>

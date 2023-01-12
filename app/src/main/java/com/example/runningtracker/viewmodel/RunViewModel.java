@@ -3,12 +3,14 @@ package com.example.runningtracker.viewmodel;
 import android.app.Application;
 import android.content.ComponentName;
 import android.content.ServiceConnection;
+import android.graphics.Bitmap;
 import android.graphics.Color;
 import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.databinding.Bindable;
 import androidx.lifecycle.MutableLiveData;
 
@@ -24,7 +26,11 @@ import com.google.android.gms.maps.model.LatLng;
 import com.google.android.gms.maps.model.MarkerOptions;
 import com.google.android.gms.maps.model.PolylineOptions;
 
+import java.io.ByteArrayOutputStream;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -37,7 +43,7 @@ public class RunViewModel extends ObservableViewModel {
     private GoogleMap mMap;
     private LatLng latLng;
     private boolean running;
-    private String uniqueRunID ;
+    private String uniqueRunID;
 
     /* Bindable Object */
     private final MutableLiveData<Integer> totalDuration = new MutableLiveData<>(0);
@@ -135,7 +141,8 @@ public class RunViewModel extends ObservableViewModel {
 
     /*
     * 1. Set thread running to false and stop the service.
-    * 2. Insert the new run data into the database with current date and time as UID.
+    * 2. Save a snapshot of the Map to upload in the database and
+    * Insert the new run data into the database with current date and time as UID.
     * */
     public void finishRun() {
         if (trackerBinder != null) {
@@ -144,16 +151,49 @@ public class RunViewModel extends ObservableViewModel {
             trackerBinder.stopRunning();
 
             // 2
+            mMap.snapshot(callback);
+        }
+    }
+
+    GoogleMap.SnapshotReadyCallback callback = new GoogleMap.SnapshotReadyCallback() {
+        // Set date format for end date time and display date time
+        final SimpleDateFormat formatterName = new SimpleDateFormat("dd MMMM yyyy h:mm aa");
+        final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+        final Date curDate = new Date(System.currentTimeMillis());
+        Bitmap bitmap;
+        byte[] mapByteArray;
+
+        @Override
+        public void onSnapshotReady(Bitmap snapshot) {
+            bitmap = snapshot;
             uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
+
+            String endTime = formatter.format(curDate);
+            String dateTimeFormatted = formatterName.format(curDate);
+
+            // Convert the Map snapshot into byte array for storing
+            try {
+                ByteArrayOutputStream stream = new ByteArrayOutputStream();
+                bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+                mapByteArray = stream.toByteArray();
+                Log.d("comp3018", mapByteArray.length + "Length");
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+
+            // Insert the new run record data
             insert(new Run(uniqueRunID,
-                    "Activity",
-                    uniqueRunID,
+                    "Run Activity",
+                    endTime,
+                    dateTimeFormatted,
                     totalDuration.getValue(),
                     totalDistance.getValue(),
                     totalPace.getValue(),
-                    totalCalories.getValue()));
+                    totalCalories.getValue(),
+                    mapByteArray));
         }
-    }
+    };
 
     /*
     * 1. Draw polyline route on the map if service is running.
@@ -209,20 +249,12 @@ public class RunViewModel extends ObservableViewModel {
         this.mMap = mMap;
     }
 
-    public LatLng getLatLng() {
-        return latLng;
-    }
-
     public boolean isRunning() {
         return running;
     }
 
     public void setRunning(boolean running) {
         this.running = running;
-    }
-
-    public String getUniqueRunID() {
-        return uniqueRunID;
     }
 
     @Bindable

@@ -6,6 +6,7 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -69,6 +70,8 @@ public class RunRecordActivity extends AppCompatActivity {
             try {
                 if (run.getPhoto() != null)
                     activityRunRecordBinding.imageViewRun.setImageBitmap(runRecordViewModel.getImage(run.getPhoto()));
+                if (run.getMapSnapshot() != null)
+                    activityRunRecordBinding.imageViewMapSnapshot.setImageBitmap(runRecordViewModel.getImage(run.getMapSnapshot()));
             } catch (Exception e) {
                 e.printStackTrace();
             }
@@ -76,6 +79,8 @@ public class RunRecordActivity extends AppCompatActivity {
 
         // Button Save onClickListener
         activityRunRecordBinding.buttonSaveRunRecord.setOnClickListener(view -> {
+            Toast.makeText(this, "Run activity information saved", Toast.LENGTH_SHORT).show();
+
             String runID = Objects.requireNonNull(runRecordViewModel.getCurrentRun().getValue()).getRunID();
             String runName = Objects.requireNonNull(activityRunRecordBinding.editTextRunName.getText()).toString();
             float runRating = activityRunRecordBinding.ratingBarRun.getRating();
@@ -123,7 +128,8 @@ public class RunRecordActivity extends AppCompatActivity {
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {
         if (item.getItemId() == R.id.deleteRunActivity) {
-            Toast.makeText(this, "Activity Deleted", Toast.LENGTH_SHORT).show();
+            String currentActivityName = Objects.requireNonNull(runRecordViewModel.getCurrentRun().getValue()).getName();
+            Toast.makeText(this, currentActivityName + " successfully deleted!", Toast.LENGTH_SHORT).show();
             runRecordViewModel.delete(runRecordViewModel.getRunID());
         }
         finish();

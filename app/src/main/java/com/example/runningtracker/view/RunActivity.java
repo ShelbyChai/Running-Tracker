@@ -7,7 +7,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.os.SystemClock;
 import android.util.Log;
@@ -24,18 +23,13 @@ import com.example.runningtracker.R;
 import com.example.runningtracker.databinding.ActivityRunBinding;
 import com.example.runningtracker.service.TrackerService;
 import com.example.runningtracker.viewmodel.RunViewModel;
-import com.google.android.gms.maps.CameraUpdateFactory;
 import com.google.android.gms.maps.GoogleMap;
 import com.google.android.gms.maps.OnMapReadyCallback;
 import com.google.android.gms.maps.SupportMapFragment;
-import com.google.android.gms.maps.model.BitmapDescriptorFactory;
 import com.google.android.gms.maps.model.LatLng;
-import com.google.android.gms.maps.model.MarkerOptions;
-import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 public class RunActivity extends AppCompatActivity implements OnMapReadyCallback {
     // Intent Key name
@@ -83,7 +77,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         });
 
         activityRunBinding.buttonStopTracker.setOnClickListener(view -> {
-            launchRunRecordActivity();
+            completeRun();
 
             Toast.makeText(this, "Run Activity finished", Toast.LENGTH_SHORT).show();
         });
@@ -116,15 +110,9 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         activityRunBinding.buttonResumeTracker.setVisibility(View.GONE);
     }
 
-    // Launch the RunRecordActivity with intent containing the UID of the completed run
-    public void launchRunRecordActivity() {
+    // Finish this activity which brings the user back to main activity
+    public void completeRun() {
         runViewModel.finishRun();
-        Intent runRecordActivity = new Intent(this, RunRecordActivity.class);
-        Bundle bundle = new Bundle();
-        bundle.putString(KEY_RUNID, runViewModel.getUniqueRunID());
-        runRecordActivity.putExtras(bundle);
-
-        startActivity(runRecordActivity);
         finish();
     }
 
@@ -148,7 +136,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
                     break;
                 case TrackerService.SERVICE_FINISH:
                     Log.d("comp3018", "Notification stop pressed");
-                    launchRunRecordActivity();
+                    completeRun();
 
                     break;
                 case TrackerService.NOTIFICATION_CONTENT_UPDATE:
@@ -206,7 +194,6 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
             }
         }
     }
-
 
     /*
     * 1. Unbind the service

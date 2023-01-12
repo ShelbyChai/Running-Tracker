@@ -42,23 +42,29 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="vertical"
-                android:paddingVertical="15dp">
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:padding="@dimen/runRecordActivity_default_padding"
+                    android:text="@{viewmodel.currentRun.dateTimeFormatted}"
+                    android:textColor="@color/black" />
+
 
                 <ImageView
                     android:id="@+id/imageViewMapSnapshot"
                     android:layout_width="match_parent"
-                    android:layout_height="200dp"
-                    android:contentDescription="Map route"
-                    android:paddingHorizontal="15dp"
+                    android:layout_height="300dp"
+                    android:contentDescription="@string/runRecordActivity_map_description"
                     android:scaleType="fitXY"
-                    tools:srcCompat="@tools:sample/backgrounds/scenic" />
+                    android:src="@drawable/image_placeholder" />
 
                 <LinearLayout
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="15dp">
+                    android:padding="@dimen/runRecordActivity_default_padding">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -124,7 +130,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
-                    android:padding="15dp">
+                    android:padding="@dimen/runRecordActivity_default_padding">
 
                     <LinearLayout
                         android:layout_width="0dp"
@@ -187,8 +193,8 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@color/gray_opac"
-                    android:padding="15dp"
-                    android:text="More info"
+                    android:padding="@dimen/runRecordActivity_default_padding"
+                    android:text="@string/runRecordActivity_textView_more_info"
                     android:textColor="@color/black_opac"
                     android:textSize="16sp" />
 
@@ -202,8 +208,8 @@
                         style="@style/Widget.MaterialComponents.TextInputLayout.OutlinedBox"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Activity Name"
-                        android:padding="15dp"
+                        android:hint="@string/runRecordActivity_textHint_activity_name"
+                        android:padding="@dimen/runRecordActivity_default_padding"
                         android:textColorHint="@color/black">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -224,8 +230,8 @@
                         android:id="@+id/textLayoutRunNote"
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
-                        android:hint="Notes"
-                        android:padding="15dp"
+                        android:hint="@string/runRecordActivity_textHint_notes"
+                        android:padding="@dimen/runRecordActivity_default_padding"
                         android:textColorHint="@color/black">
 
                         <com.google.android.material.textfield.TextInputEditText
@@ -251,12 +257,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="15dp">
+                        android:padding="@dimen/runRecordActivity_default_padding">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="How did this run feel?"
+                            android:text="@string/runRecordActivity_textView_rating"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -266,7 +272,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:layout_gravity="center"
-                            android:contentDescription="Run rating bar"
+                            android:contentDescription="@string/runRecord_ratingBar_description"
                             android:numStars="5"
                             android:rating="@{viewmodel.currentRun.rating}"
                             android:stepSize="1" />
@@ -281,12 +287,12 @@
                         android:layout_width="match_parent"
                         android:layout_height="wrap_content"
                         android:orientation="vertical"
-                        android:padding="15dp">
+                        android:padding="@dimen/runRecordActivity_default_padding">
 
                         <TextView
                             android:layout_width="match_parent"
                             android:layout_height="wrap_content"
-                            android:text="Activity photo"
+                            android:text="@string/runRecordActivity_textView_activity_photo"
                             android:textColor="@color/black"
                             android:textSize="16sp"
                             android:textStyle="bold" />
@@ -296,17 +302,16 @@
                             android:layout_width="match_parent"
                             android:layout_height="300dp"
                             android:background="@color/white"
-                            android:contentDescription="Run photo"
-                            android:src="@drawable/image_placeholder"
+                            android:contentDescription="@string/runRecordActivity_runImage_description"
                             android:scaleType="fitXY"
-                            tools:srcCompat="@drawable/image_placeholder" />
+                            android:src="@drawable/image_placeholder" />
 
                         <com.google.android.material.button.MaterialButton
                             android:id="@+id/buttonUploadImage"
                             style="@style/Widget.MaterialComponents.Button.OutlinedButton"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Upload Image"
+                            android:text="@string/runRecordActivity_button_upload_image"
                             android:textColor="@color/black"
                             app:backgroundTint="@color/white"
                             app:cornerRadius="0dp"
@@ -329,8 +334,8 @@
             android:id="@+id/buttonSaveRunRecord"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="15dp"
-            android:text="Save"
+            android:layout_margin="@dimen/runRecordActivity_default_padding"
+            android:text="@string/runRecordActivity_button_save"
             android:textColor="@color/white"
             app:backgroundTint="@color/black"
             app:cornerRadius="0dp" />
