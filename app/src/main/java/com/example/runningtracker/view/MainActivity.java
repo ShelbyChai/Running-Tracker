@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity {
     public void onClickStartRunActivity(View view) {
         locationPermissionRequest.launch(new String[] {
                 Manifest.permission.ACCESS_FINE_LOCATION,
-                Manifest.permission.ACCESS_COARSE_LOCATION,
                 Manifest.permission.INTERNET
         });
     }

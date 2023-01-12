@@ -2,6 +2,10 @@ package com.example.runningtracker.viewmodel;
 
 import android.app.Application;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
+import android.graphics.drawable.Drawable;
+import android.provider.MediaStore;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
@@ -9,6 +13,10 @@ import androidx.lifecycle.LiveData;
 
 import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.repository.MyRepository;
+
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.net.URI;
 
 public class RunRecordViewModel extends ObservableViewModel {
     /* Instantiate required variables */
@@ -20,6 +28,20 @@ public class RunRecordViewModel extends ObservableViewModel {
         super(application);
 
         myRepository = new MyRepository(application);
+    }
+
+    // Convert byte[] image format (database format) to Bitmap
+    public Bitmap getImage(byte[] image) {
+        return BitmapFactory.decodeByteArray(image, 0, image.length);
+    }
+
+    // Convert drawable into byte[] image format for storing in the database
+    public byte[] getImageBytes(Drawable drawable){
+        BitmapDrawable bitmapDrawable = (BitmapDrawable) drawable;
+        Bitmap bitmap = bitmapDrawable .getBitmap();
+        ByteArrayOutputStream stream = new ByteArrayOutputStream();
+        bitmap.compress(Bitmap.CompressFormat.PNG, 0, stream);
+        return stream.toByteArray();
     }
 
     /* Getter & Setter */
