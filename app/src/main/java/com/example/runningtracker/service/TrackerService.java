@@ -4,23 +4,27 @@ import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
-import android.content.Context;
 import android.content.Intent;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.os.Binder;
-import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IInterface;
+import android.os.Looper;
 import android.os.RemoteCallbackList;
 import android.util.Log;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.runningtracker.R;
 import com.example.runningtracker.view.RunActivity;
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.Priority;
 
 import java.util.Objects;
 
@@ -36,8 +40,9 @@ public class TrackerService extends Service {
     private String serviceStatus;
 
     /* Declare location variable */
-    private LocationManager locationManager;
-    private MyLocationListener locationListener;
+    private FusedLocationProviderClient fusedLocationClient;
+    private LocationCallback locationCallback;
+    private LocationRequest locationRequest;
 
     /* Notification objects and variables */
     private final String NOTIFICATION_CHANNEL_ID = "100";
@@ -110,39 +115,6 @@ public class TrackerService extends Service {
         remoteCallbackList.finishBroadcast();
     }
 
-    /* Location Listener */
-
-    public class MyLocationListener implements LocationListener {
-        @Override
-        public void onLocationChanged(Location location) {
-            Log.d("comp3018", "location " + location.toString());
-            // Do location callback
-            doCallbacks(location);
-
-            // Broadcast intent to update notification Content text in Run Activity
-            Intent updateNotificationText = new Intent(NOTIFICATION_CONTENT_UPDATE);
-            sendBroadcast(updateNotificationText);
-        }
-
-        @Override
-        public void onStatusChanged(String provider, int status, Bundle extras) {
-            // information about the signal, i.e. number of satellite
-            Log.d("comp3018", "onStatusChanged: " + provider + " " + status);
-        }
-
-        @Override
-        public void onProviderEnabled(@NonNull String provider) {
-            // the user enabled (for example) the GPS
-            Log.d("comp3018", "onProviderEnabled: " + provider);
-        }
-
-        @Override
-        public void onProviderDisabled(@NonNull String provider) {
-            // the user disabled (for example) the GPS
-            Log.d("comp3018", "onProviderDisabled: " + provider);
-        }
-    }
-
     /* Service Lifecycle */
 
     @Override
@@ -150,8 +122,26 @@ public class TrackerService extends Service {
         Log.d("comp3018", "TrackerService onCreate");
         super.onCreate();
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
-        locationListener = new MyLocationListener();
+        fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
+        // Request location update for every 1 second
+        locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
+                .setMinUpdateIntervalMillis(1000).build();
+
+        locationCallback = new LocationCallback() {
+            @Override
+            public void onLocationResult(@NonNull LocationResult locationResult) {
+                for (Location location : locationResult.getLocations()) {
+                    Log.d("comp3018", "location " + location.toString());
+                    doCallbacks(location);
+
+                    // Broadcast intent to update notification Content text in Run Activity
+                    Intent updateNotificationText = new Intent(NOTIFICATION_CONTENT_UPDATE);
+                    sendBroadcast(updateNotificationText);
+                }
+            }
+        };
+
         serviceStatus = SERVICE_PAUSE;
 
         // Start the notification and location update
@@ -166,40 +156,32 @@ public class TrackerService extends Service {
     private void startLocationUpdate() {
         if (!Objects.equals(serviceStatus, SERVICE_RUNNING)) {
             serviceStatus = SERVICE_RUNNING;
-            // Request for location update with 1 second interval and minimum distance travel of 0
             try {
-                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                            1000,
-                            0,
-                            locationListener);
-                }
+                fusedLocationClient.requestLocationUpdates(locationRequest,
+                        locationCallback,
+                        Looper.getMainLooper());
             } catch(SecurityException e) {
-                Log.d("comp3018", e.toString());
+                // lacking permission to access location
             }
         }
     }
 
     // If the service status is not pause, remove the location updates and set the status to pause
     private void pauseLocationUpdate() {
-        if (!Objects.equals(serviceStatus, SERVICE_PAUSE) && locationManager != null) {
+        if (!Objects.equals(serviceStatus, SERVICE_PAUSE) && fusedLocationClient != null) {
             serviceStatus = SERVICE_PAUSE;
             // Pass null location to reset previous location to null
             doCallbacks(null);
-            locationManager.removeUpdates(locationListener);
+            fusedLocationClient.removeLocationUpdates(locationCallback);
         }
     }
 
     // Remove the location update, foreground service and notification
     private void finishLocationUpdate() {
-        if (locationManager != null) {
+        if (fusedLocationClient != null) {
             serviceStatus = SERVICE_FINISH;
-            locationManager.removeUpdates(locationListener);
-            locationManager = null;
-        }
-
-        if (locationListener != null) {
-            locationListener = null;
+            fusedLocationClient.removeLocationUpdates(locationCallback);
+            fusedLocationClient = null;
         }
 
         // Stop all foreground services and cancel all the notification

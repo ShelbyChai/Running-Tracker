@@ -102,6 +102,9 @@ public class RunViewModel extends ObservableViewModel {
      * 4. Calculate the current pace using the distance / duration.
      * 5. Calculate the total calories (60 cal per hour).
      * 6. Set the total distance, duration, calories and pace and notify observer for changes.
+     *
+     * The timer will only increments when the GPS is turned on else the distance variable
+     * aren't updating which will affect the statistic of the run.
      * */
     private void updateRunData() {
         trackerCallback = new TrackerCallback() {
