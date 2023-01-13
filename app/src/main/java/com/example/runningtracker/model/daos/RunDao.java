@@ -30,6 +30,10 @@ public interface RunDao {
     @Query("SELECT * FROM run_table WHERE runID = :runID")
     LiveData<Run> getRun(String runID);
 
+    // General query of all the run records
+    @Query("SELECT * FROM run_table")
+    LiveData<List<Run>> getRuns();
+
     // Query run records by recent time
     @Query("SELECT * FROM run_table ORDER BY datetime(endDateTime) DESC")
     LiveData<List<Run>> getRecentRuns();

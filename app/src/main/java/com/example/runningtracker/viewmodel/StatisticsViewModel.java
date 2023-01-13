@@ -10,6 +10,8 @@ import androidx.lifecycle.LiveData;
 import com.example.runningtracker.BR;
 import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.repository.MyRepository;
+import com.jjoe64.graphview.series.DataPoint;
+import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.List;
 
@@ -20,7 +22,7 @@ public class StatisticsViewModel extends ObservableViewModel{
     private int totalCalories;
     private int totalDuration;
 
-    private final LiveData<List<Run>> allRecentRuns;
+    private final LiveData<List<Run>> allRuns;
 
     public StatisticsViewModel(@NonNull Application application) {
         super(application);
@@ -32,13 +34,13 @@ public class StatisticsViewModel extends ObservableViewModel{
         totalDuration = 0;
 
         MyRepository myRepository = new MyRepository(application);
-        allRecentRuns = myRepository.getRecentRuns();
+        allRuns = myRepository.getRuns();
     }
 
     // Calculate the total distance, pace, duration, activity and average pace for statistics display.
     public void calculateRunsAverages() {
         if (runsCount != 0) {
-            List<Run> runList = allRecentRuns.getValue();
+            List<Run> runList = allRuns.getValue();
 
             assert runList != null;
             for (Run run: runList) {
@@ -57,6 +59,20 @@ public class StatisticsViewModel extends ObservableViewModel{
             notifyPropertyChanged(BR.totalDuration);
             notifyPropertyChanged(BR.runsCount);
         }
+    }
+
+    public LineGraphSeries<DataPoint> plotOverallRunsGraph() {
+        LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
+        List<Run> runList = allRuns.getValue();
+
+        if (runsCount != 0) {
+            for (int i=0; i< runsCount; i++) {
+                Run run = runList.get(i);
+                series.appendData(new DataPoint(i, run.getDistance()), true, runsCount);
+            }
+        }
+
+        return series;
     }
 
     /* Getter and Setter */
@@ -92,7 +108,7 @@ public class StatisticsViewModel extends ObservableViewModel{
 
     /* Getter and Setter (Repository) */
 
-    public LiveData<List<Run>> getAllRecentRuns() {
-        return allRecentRuns;
+    public LiveData<List<Run>> getAllRuns() {
+        return allRuns;
     }
 }

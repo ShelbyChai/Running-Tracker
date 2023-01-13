@@ -6,4 +6,5 @@
     <dimen name="runActivity_textSize_medium">25sp</dimen>
     <dimen name="runRecordActivity_default_padding">15dp</dimen>
     <dimen name="mainActivity_default_text_size">16sp</dimen>
+    <dimen name="statisticsActivity_default_font_size">16sp</dimen>
 </resources>

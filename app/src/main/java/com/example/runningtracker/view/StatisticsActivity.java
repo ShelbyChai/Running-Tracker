@@ -36,12 +36,20 @@ public class StatisticsActivity extends AppCompatActivity {
 
 
         // Observe runs LiveData to get all run objects
-        statisticsViewModel.getAllRecentRuns().observe(this, runs -> {
+        statisticsViewModel.getAllRuns().observe(this, runs -> {
             if (runs != null) {
                 // Set the number of run activities
                 statisticsViewModel.setRunsCount(runs.size());
                 statisticsViewModel.calculateRunsAverages();
+                activityStatisticsBinding.graphViewRuns.removeAllSeries();
+                activityStatisticsBinding.graphViewRuns.addSeries(statisticsViewModel.plotOverallRunsGraph());
+                activityStatisticsBinding.graphViewRuns.setTitle("Distance (km) - Across all runs");
+                activityStatisticsBinding.graphViewRuns.getGridLabelRenderer().setVerticalAxisTitle("Distance (km)");
+                activityStatisticsBinding.graphViewRuns.getGridLabelRenderer().setHorizontalAxisTitle("Runs");
+                activityStatisticsBinding.graphViewRuns.getGridLabelRenderer().setNumHorizontalLabels(runs.size());
+                activityStatisticsBinding.graphViewRuns.getGridLabelRenderer().setHorizontalLabelsVisible(true);
             }
         });
+
     }
 }

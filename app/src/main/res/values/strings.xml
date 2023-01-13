@@ -32,10 +32,18 @@
     <string name="mainActivity_button_start_running">Start Running</string>
     <string name="runActivity_app_bar_title">Run</string>
 
-    <!-- Spinner String Array -->
+    <!-- Spinner Main Activity Recycler View String Array -->
     <string-array name="run_sort">
         <item>Recent</item>
         <item>Distance</item>
+        <item>Pace</item>
+        <item>Calories</item>
+    </string-array>
+
+    <!-- Spinner Statistics Activity Graph String Array -->
+    <string-array name="graph_sort">
+        <item>Distance</item>
+        <item>Duration</item>
         <item>Pace</item>
         <item>Calories</item>
     </string-array>
