@@ -37,12 +37,13 @@ public class RunViewModel extends ObservableViewModel {
     private TrackerService.MyBinder trackerBinder = null;
     private TrackerCallback trackerCallback;
 
-    /* Instantiate required variables */
+    /* Declare required variables */
     private GoogleMap mMap;
     private LatLng latLng;
     private boolean running;
 
     /* Bindable Object */
+    // Declare the Mutable Live Data required for displaying on the Run Activity
     private final MutableLiveData<Integer> runDuration = new MutableLiveData<>(0);
     private final MutableLiveData<Integer> runDistance = new MutableLiveData<>(0);
     private final MutableLiveData<Double> runPace = new MutableLiveData<>((double) 0);
@@ -50,6 +51,9 @@ public class RunViewModel extends ObservableViewModel {
 
     private final MyRepository myRepository;
 
+    /*
+     * Connection to get the service instance, callback management and handle disconnecting
+     * */
     private ServiceConnection serviceConnection = new ServiceConnection() {
         @Override
         public void onServiceConnected(ComponentName name, IBinder service) {
@@ -66,6 +70,8 @@ public class RunViewModel extends ObservableViewModel {
         }
     };
 
+    // Constructor links repository and start updating the UI via the tracker callback
+    // after the viewModel is initialised
     public RunViewModel(@NonNull Application application) {
         super(application);
 
@@ -76,13 +82,13 @@ public class RunViewModel extends ObservableViewModel {
     }
 
     /*
-    * 1. Set the latitude and longitude of the current location for map usage.
-    * 2. Update the current distance vairable.
-    * 3. Increment the duration variable.
-    * 4. Calculate the current pace using the distance / duration.
-    * 5. Calculate the total calories (60 cal per hour).
-    * 6. Set the total distance, duration, calories and pace and notify observer for changes.
-    * */
+     * 1. Set the latitude and longitude of the current location for map usage.
+     * 2. Update the current distance vairable.
+     * 3. Increment the duration variable.
+     * 4. Calculate the current pace using the distance / duration.
+     * 5. Calculate the total calories (60 cal per hour).
+     * 6. Set the total distance, duration, calories and pace and notify observer for changes.
+     * */
     private void updateRunData() {
         trackerCallback = new TrackerCallback() {
             private Location prevLocation = null;
@@ -137,10 +143,10 @@ public class RunViewModel extends ObservableViewModel {
     }
 
     /*
-    * 1. Set thread running to false and stop the service.
-    * 2. Save a snapshot of the Map to upload in the database and
-    * Insert the new run data into the database with current date and time as UID.
-    * */
+     * 1. Set thread running to false and stop the service.
+     * 2. Save a snapshot of the Map to upload in the database and
+     * Insert the new run data into the database with current date and time as UID.
+     * */
     public void finishRun() {
         if (trackerBinder != null) {
             // 1
@@ -193,9 +199,9 @@ public class RunViewModel extends ObservableViewModel {
     };
 
     /*
-    * 1. Draw polyline route on the map if service is running.
-    * 2. Clear the LatLng List and not draw on the map if service is pause.
-    * */
+     * 1. Draw polyline route on the map if service is running.
+     * 2. Clear the LatLng List and not draw on the map if service is pause.
+     * */
     public void drawPolylineOnMap(List<LatLng> latLngList) {
 
         if (latLng != null && trackerBinder.getServiceStatus() != null) {

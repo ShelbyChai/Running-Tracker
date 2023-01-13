@@ -61,7 +61,7 @@
                         android:layout_weight="2"
                         android:text="Distance (km)"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -70,7 +70,7 @@
                         android:gravity="center"
                         android:text="@{viewmodel.formatDistance(viewmodel.totalDistance)}"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
                 </TableRow>
 
                 <View
@@ -89,7 +89,7 @@
                         android:layout_weight="2"
                         android:text="Avg Pace (min/km)"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -98,7 +98,7 @@
                         android:gravity="center"
                         android:text="@{viewmodel.formatPace(viewmodel.averagePace)}"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
                 </TableRow>
 
                 <View
@@ -117,7 +117,7 @@
                         android:layout_weight="2"
                         android:text="Calories Burned (cal)"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -126,7 +126,7 @@
                         android:gravity="center"
                         android:text="@{String.valueOf(viewmodel.totalCalories)}"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
                 </TableRow>
 
                 <View
@@ -145,7 +145,7 @@
                         android:layout_weight="2"
                         android:text="Time Spent"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -154,7 +154,7 @@
                         android:gravity="center"
                         android:text="@{viewmodel.formatTime(viewmodel.totalDuration)}"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
                 </TableRow>
 
                 <View
@@ -173,7 +173,7 @@
                         android:layout_weight="2"
                         android:text="Activities"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
 
                     <TextView
                         android:layout_width="0dp"
@@ -182,7 +182,7 @@
                         android:gravity="center"
                         android:text="@{String.valueOf(viewmodel.runsCount)}"
                         android:textColor="@color/black"
-                        android:textSize="@dimen/statisticsActivity_default_font_size" />
+                        android:textSize="@dimen/textSize_default" />
                 </TableRow>
 
                 <View
@@ -231,7 +231,7 @@
                 android:layout_height="wrap_content"
                 android:text="Summary Graph"
                 android:textColor="@color/black"
-                android:textSize="@dimen/runActivity_textSize_medium"
+                android:textSize="@dimen/textSize_medium"
                 android:textStyle="bold" />
 
             <LinearLayout
@@ -251,7 +251,7 @@
                     android:gravity="center_vertical"
                     android:text="Filter"
                     android:textColor="@color/black"
-                    android:textSize="@dimen/mainActivity_default_text_size"
+                    android:textSize="@dimen/textSize_small"
                     android:textStyle="bold" />
 
                 <Spinner

@@ -39,7 +39,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static final int REQUEST_CODE_LOCATION_PERMISSION = 1;
     public static final int RESULT_CODE_LOCATION_SETTINGS = 2;
 
+    // Adapter for the recycler view to show all runs
     private RunAdapter adapter;
+    // View model fetches runs Live Data
     private MainViewModel mainViewModel;
 
     @Override
@@ -48,25 +50,25 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
         // Create viewModel and bind layout views to architecutre component
         ActivityMainBinding activityMainBinding = ActivityMainBinding.inflate(LayoutInflater.from(this));
-
         mainViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
                         getInstance(this.getApplication())).get(MainViewModel.class);
 
         activityMainBinding.setLifecycleOwner(this);
-
         setContentView(activityMainBinding.getRoot());
         activityMainBinding.setViewmodel(mainViewModel);
 
 
-        // Setup spinner adapter for Run filter functionality
+        // Setup spinner adapter for the Sort By/Filter of recycler view's display
         ArrayAdapter<CharSequence> arrayAdapter = ArrayAdapter.createFromResource(this, R.array.run_sort, androidx.appcompat.R.layout.support_simple_spinner_dropdown_item);
         arrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         activityMainBinding.spinnerRunFilter.setAdapter(arrayAdapter);
         activityMainBinding.spinnerRunFilter.setOnItemSelectedListener(this);
 
 
-        // Setup recycler view adapter to display Run
+        // Setup recycler view adapter to display all Runs. When a run is clicked,
+        // pass the primary key of the run (runID) via intent to RunRecordActivity
+        // in order to display the single run's record/information.
         adapter = new RunAdapter(this, run -> {
             Intent intent = new Intent(MainActivity.this, RunRecordActivity.class);
             intent.putExtra(RunActivity.KEY_RUNID, run.getRunID());
@@ -76,7 +78,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         activityMainBinding.recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
-    // Check Location Permission and if GPS is enabled
+    /*
+    * Onclick: Only ask/check for Location Permission and GPS when the user starts
+    * to interact with the tracker service that requires the permission.
+    * */
     public void onClickStartRunActivity(View view) {
         locationPermissionRequest.launch(new String[]{
                 Manifest.permission.ACCESS_FINE_LOCATION,
@@ -91,6 +96,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         startActivity(runActivity);
     }
 
+    // Start Statistic Activity (Overall Summary performance activity)
     public void onClickStartStatisticActivity(View view) {
         Log.d("comp3018", "MainActivity startStatistic Activity");
         Intent statisticActivity = new Intent(MainActivity.this, StatisticsActivity.class);
@@ -99,6 +105,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /*
      * Check and prompt for location permission.
+     * 1. Precise location access granted.
+     * 2. If user never click "Deny & don't ask me again" before, display an alert dialog to
+     * explain why it is needed and re-prompt for location permission.
+     * 3. If user clicked "Deny & don't ask me again" before, display a toast message containing
+     * the location permission path if the user want to enable it.
      * */
     ActivityResultLauncher<String[]> locationPermissionRequest =
             registerForActivityResult(new ActivityResultContracts
@@ -109,12 +120,12 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         Boolean coarseLocationGranted = result.getOrDefault(
                                 Manifest.permission.ACCESS_COARSE_LOCATION, false);
 
+                        // 1
                         if (fineLocationGranted != null && fineLocationGranted) {
-                            // Precise location access granted.
                             Log.d("comp3018", "fine location granted!");
                             checkLocationSettings();
 
-                            // Display a dialog to re-prompt the location permission
+                            // 2
                         } else if (ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
                                 Manifest.permission.ACCESS_COARSE_LOCATION) &&
                                 ActivityCompat.shouldShowRequestPermissionRationale(MainActivity.this,
@@ -137,11 +148,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                             alertDialog.show();
 
                         } else if (coarseLocationGranted != null && coarseLocationGranted) {
-                            // Only approximate location access granted.
                             Log.d("comp3018", "coarse location granted!");
 
                         } else {
-                            // No location access granted.
+                            // 3
                             Log.d("comp3018", "no location granted!");
 
                             Toast.makeText(this, R.string.set_permissions_in_settings,
@@ -152,6 +162,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     /*
      * Check if location settings is on. (GPS setting)
+     * 1. Location settings (GPS) are satisfied, launch the tracker service.
+     * 2. Prompt the user to change location settings (Turn on GPS)
+     * Location settings are not satisfied, show a dialog by calling startResolutionForResult().
+     * and check the result in onActivityResult().
      * */
     private void checkLocationSettings() {
         LocationRequest locationRequest = new
@@ -161,18 +175,14 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         SettingsClient client = LocationServices.getSettingsClient(this);
         Task<LocationSettingsResponse> task = client.checkLocationSettings(builder.build());
 
-        // Location settings are satisfied, launch the tracker service
+        // 1
         task.addOnSuccessListener(this, locationSettingsResponse -> {
             Log.d("comp3018", "location setting is on!");
 
             startRunActivity();
         });
 
-        /*
-         * Prompt the user to change location settings (Turn on GPS)
-         * Location settings are not satisfied, show a dialog by calling startResolutionForResult().
-         * and check the result in onActivityResult().
-         * */
+        // 2
         task.addOnFailureListener(this, e -> {
             if (e instanceof ResolvableApiException) {
 
@@ -192,24 +202,22 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        switch (requestCode) {
-            // Start the Run Activity if the user enabled the location settings (GPS settings)
-            case RESULT_CODE_LOCATION_SETTINGS:
-                Log.d("comp3018", "result code: " + resultCode);
-                if (resultCode != 0) {
-                    startRunActivity();
-                }
-                break;
+        // Start the Run Activity if the user enabled the location settings (GPS settings)
+        if (requestCode == RESULT_CODE_LOCATION_SETTINGS) {
+            Log.d("comp3018", "result code: " + resultCode);
+            if (resultCode != 0) {
+                startRunActivity();
+            }
         }
     }
 
     /*
-    * Set the sorting/filtering method of recycler view.
+    * When a spinner item is selected, change the data of the recycler view.
+    * Filter type contains (Recent, Distance, Pace & Calories)
     * */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String selectedFilter = adapterView.getItemAtPosition(i).toString();
-
         Toast.makeText(getApplicationContext(), "Sort runs by " + selectedFilter, Toast.LENGTH_SHORT).show();
 
         switch(selectedFilter) {

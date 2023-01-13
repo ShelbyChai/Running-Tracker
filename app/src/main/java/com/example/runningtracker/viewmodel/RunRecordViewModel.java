@@ -9,6 +9,7 @@ import android.graphics.drawable.Drawable;
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.SavedStateHandle;
 
 import com.example.runningtracker.model.entity.Run;
 import com.example.runningtracker.model.repository.MyRepository;
@@ -16,15 +17,24 @@ import com.example.runningtracker.model.repository.MyRepository;
 import java.io.ByteArrayOutputStream;
 
 public class RunRecordViewModel extends ObservableViewModel {
-    /* Instantiate required variables */
+    // Declare saveStateHandle to persist the data
+    private final SavedStateHandle savedStateHandle;
+
+    /* Instantiate the id of the run record and the current run record's data */
     private String runID;
     private LiveData<Run> currentRun;
     private final MyRepository myRepository;
 
-    public RunRecordViewModel(@NonNull Application application) {
+    // Constructor links repository
+    public RunRecordViewModel( @NonNull Application application, SavedStateHandle savedStateHandle) {
         super(application);
+        this.savedStateHandle = savedStateHandle;
 
         myRepository = new MyRepository(application);
+
+        if (this.savedStateHandle.contains("runID")) {
+            runID = this.savedStateHandle.get("runID");
+        }
     }
 
     // Convert byte[] image format (database format) to Bitmap
@@ -49,6 +59,7 @@ public class RunRecordViewModel extends ObservableViewModel {
 
     public void setRunID(String runID) {
         this.runID = runID;
+        this.savedStateHandle.set("runID", runID);
     }
 
     @Bindable

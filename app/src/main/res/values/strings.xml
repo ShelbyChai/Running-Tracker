@@ -6,6 +6,12 @@
         -> Running Tracker -> App Permissions and grant access to Location.</string>
     <string name="notification_title">Running Activity</string>
 
+    <!-- Main Activity -->
+    <string name="mainActivity_activities_title">ACTIVITIES</string>
+    <string name="mainActivity_textView_sort_by">Sort By:</string>
+    <string name="mainActivity_button_statistic">Statistic</string>
+    <string name="mainActivity_button_start_running">Start Running</string>
+
     <!-- Run Activity -->
     <string name="runActivity_duration_label">Duration</string>
     <string name="runActivity_distance_label">Distance (km)</string>
@@ -14,6 +20,7 @@
     <string name="runActivity_button_pause">Pause</string>
     <string name="runActivity_button_resume">Resume</string>
     <string name="runActivity_button_stop">Stop</string>
+    <string name="runActivity_app_bar_title">Run</string>
 
     <!-- Run Record Activity -->
     <string name="runRecordActivity_map_description">Map route</string>
@@ -26,11 +33,6 @@
     <string name="runRecordActivity_runImage_description">Run photo</string>
     <string name="runRecordActivity_button_upload_image">Upload Image</string>
     <string name="runRecordActivity_button_save">Save</string>
-    <string name="mainActivity_activities_title">ACTIVITIES</string>
-    <string name="mainActivity_textView_sort_by">Sort By:</string>
-    <string name="mainActivity_button_statistic">Statistic</string>
-    <string name="mainActivity_button_start_running">Start Running</string>
-    <string name="runActivity_app_bar_title">Run</string>
 
     <!-- Spinner Main Activity Recycler View String Array -->
     <string-array name="run_sort">

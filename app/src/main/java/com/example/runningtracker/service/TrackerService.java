@@ -32,6 +32,8 @@ public class TrackerService extends Service {
 
     private final RemoteCallbackList<MyBinder> remoteCallbackList = new RemoteCallbackList<MyBinder>();
     private String serviceStatus;
+
+    /* Declare location variable */
     private LocationManager locationManager;
     private MyLocationListener locationListener;
 
@@ -43,6 +45,12 @@ public class TrackerService extends Service {
 
     /* Binder */
 
+    /*
+     * An interface like class for the service.
+     * It wrap up and contains the methods that the activity can
+     * call on the service. The MyBinder object reference into
+     * the service and call methods.
+     * */
     public class MyBinder extends Binder implements IInterface {
         private TrackerCallback trackerCallback;
 
@@ -106,6 +114,7 @@ public class TrackerService extends Service {
         @Override
         public void onLocationChanged(Location location) {
             Log.d("comp3018", "location " + location.toString());
+            // Do location callback
             doCallbacks(location);
 
             // Broadcast intent to update notification Content text in Run Activity
@@ -125,36 +134,19 @@ public class TrackerService extends Service {
         locationListener = new MyLocationListener();
         serviceStatus = SERVICE_PAUSE;
 
+        // Start the notification and location update
         buildNotificationChannel();
-
         startLocationUpdate();
         buildNotification();
     }
 
-    @Override
-    public int onStartCommand(Intent intent, int flags, int startId) {
-        Log.d("comp3018", "TrackerService onStartCommand");
-
-        return super.onStartCommand(intent, flags, startId);
-    }
-
-    @Override
-    public IBinder onBind(Intent intent) {
-        Log.d("comp3018", "TrackerService onBind");
-        return new MyBinder();
-    }
-
-    @Override
-    public void onDestroy() {
-        super.onDestroy();
-        finishLocationUpdate();
-    }
-
     /* Location update buttons */
 
+    // If the service status is not running, start the location update and set the status to running
     private void startLocationUpdate() {
         if (!Objects.equals(serviceStatus, SERVICE_RUNNING)) {
             serviceStatus = SERVICE_RUNNING;
+            // Request for location update with 1 second interval and minimum distance travel of 0
             try {
                 locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
                         1000,
@@ -166,6 +158,7 @@ public class TrackerService extends Service {
         }
     }
 
+    // If the service status is not pause, remove the location updates and set the status to pause
     private void pauseLocationUpdate() {
         if (!Objects.equals(serviceStatus, SERVICE_PAUSE) && locationManager != null) {
             serviceStatus = SERVICE_PAUSE;
@@ -175,6 +168,7 @@ public class TrackerService extends Service {
         }
     }
 
+    // Remove the location update, foreground service and notification
     private void finishLocationUpdate() {
         if (locationManager != null) {
             serviceStatus = SERVICE_FINISH;
@@ -189,15 +183,12 @@ public class TrackerService extends Service {
         // Stop all foreground services and cancel all the notification
         stopForeground(true);
         notificationManager.cancelAll();
-
     }
 
     /* Notification */
 
-    // Initialise notification channel
     private void buildNotificationChannel() {
         notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-
         CharSequence channelName = "Running Tracker";
         int importance = NotificationManager.IMPORTANCE_LOW;
         NotificationChannel channel = new NotificationChannel(NOTIFICATION_CHANNEL_ID, channelName, importance);
@@ -212,7 +203,9 @@ public class TrackerService extends Service {
     }
 
     /*
-    * 1. Add service control buttons that invoke intents on the Tracker Service
+    * Build and starts a new foreground notification with a pending intent that
+    * return the user to the Run Activity.
+    * 1. Notification Button: Add service control buttons that invoke intents on the Tracker Service.
     * 2. Start Foreground Service and build the notification
     * */
     private void buildNotification() {
@@ -232,5 +225,23 @@ public class TrackerService extends Service {
 
         // 2
         startForeground(NOTIFICATION_ID, notificationBuilder.build());
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        Log.d("comp3018", "TrackerService onStartCommand");
+        return super.onStartCommand(intent, flags, startId);
+    }
+
+    @Override
+    public IBinder onBind(Intent intent) {
+        Log.d("comp3018", "TrackerService onBind");
+        return new MyBinder();
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        finishLocationUpdate();
     }
 }

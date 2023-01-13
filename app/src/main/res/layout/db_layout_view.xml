@@ -28,7 +28,7 @@
             android:padding="2dp"
             android:text="distance"
             android:textColor="@color/black"
-            android:textSize="@dimen/runActivity_textSize_small" />
+            android:textSize="@dimen/textSize_tiny" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -43,7 +43,7 @@
                 android:layout_weight="1"
                 android:text="duration"
                 android:textColor="@color/black"
-                android:textSize="@dimen/runActivity_textSize_small" />
+                android:textSize="@dimen/textSize_tiny" />
 
             <TextView
                 android:id="@+id/dateTimeView"
@@ -51,7 +51,7 @@
                 android:layout_height="wrap_content"
                 android:text="Date"
                 android:textColor="@color/black"
-                android:textSize="@dimen/runActivity_textSize_small" />
+                android:textSize="@dimen/textSize_tiny" />
 
         </LinearLayout>
 

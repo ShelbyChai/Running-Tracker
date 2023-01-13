@@ -41,6 +41,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
     private RunViewModel runViewModel;
     private ActivityRunBinding activityRunBinding;
+    private MapUpdate mapUpdate;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -51,12 +52,13 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         runViewModel = new ViewModelProvider(this,
                 (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
                         getInstance(this.getApplication())).get(RunViewModel.class);
+
         activityRunBinding.setLifecycleOwner(this);
         setContentView(activityRunBinding.getRoot());
         activityRunBinding.setViewmodel(runViewModel);
 
 
-        // Obtain the SupportMapFragment and get notified when the map is ready to be used.
+        // Get the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
                 .findFragmentById(R.id.map);
         assert mapFragment != null;
@@ -98,47 +100,60 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         startForegroundService(trackerService);
     }
 
-    // Enable the visibility of resume button
+    // Enable the visibility of resume button (invoked when pause button is pressed)
     public void showResumeButton() {
         activityRunBinding.buttonPauseTracker.setVisibility(View.GONE);
         activityRunBinding.buttonResumeTracker.setVisibility(View.VISIBLE);
     }
 
-    // Enable the visibility of pause button
+    // Enable the visibility of pause button (invoked when resume button is pressed)
     public void showPauseButton() {
         activityRunBinding.buttonPauseTracker.setVisibility(View.VISIBLE);
         activityRunBinding.buttonResumeTracker.setVisibility(View.GONE);
     }
 
-    // Finish this activity which brings the user back to main activity
+    // Finish this activity and brings the user back to MainActivity (invoked when stop button is pressed)
     public void completeRun() {
         runViewModel.finishRun();
         finish();
     }
 
+    /*
+    * Broadcast receiver to set the action of notification buttons.
+    * 1. Resume button on notification: Resume the operation of tracker service and set pause
+    * button to visible on the RunActivity.
+    * 2. Pause button on notification: Stop the location update of the tracker service and set
+    * resume button to visible on the RunActivity.
+    * 3. Stop button on notification: Stop the location update and destroy the activity and service.
+    * 4. Call the method to update the distance and duration text on the content of the notification.
+    * */
     private final BroadcastReceiver notificationReceiver = new BroadcastReceiver() {
         @Override
         public void onReceive(Context context, Intent intent) {
             String notificationIntent = intent.getAction();
 
             switch (notificationIntent) {
+                // 1
                 case TrackerService.SERVICE_RUNNING:
                     Log.d("comp3018", "Notification resume pressed");
                     runViewModel.getTrackerBinder().startRunning();
                     showPauseButton();
 
                     break;
+                    // 2
                 case TrackerService.SERVICE_PAUSE:
                     Log.d("comp3018", "Notification pause pressed");
                     runViewModel.getTrackerBinder().pauseRunning();
                     showResumeButton();
 
                     break;
+                    // 3
                 case TrackerService.SERVICE_FINISH:
                     Log.d("comp3018", "Notification stop pressed");
                     completeRun();
 
                     break;
+                    // 4
                 case TrackerService.NOTIFICATION_CONTENT_UPDATE:
                     Log.d("comp3018", "Notification content text updated");
                     runViewModel.getTrackerBinder().getNotificationManager().notify(TrackerService.NOTIFICATION_ID,
@@ -151,7 +166,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         }
     };
 
-    // Update content text of duration and distance of the notification
+    // Update the content text of duration and distance of the notification
     private Notification updateNotificationContent() {
         runViewModel.getTrackerBinder().getNotificationBuilder().
                 setContentTitle(getString(R.string.notification_title)).
@@ -161,6 +176,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         return runViewModel.getTrackerBinder().getNotificationBuilder().build();
     }
 
+    // Set the UI component and update thread for the map when it is ready to use
     @Override
     public void onMapReady(@NonNull GoogleMap googleMap) {
         runViewModel.setmMap(googleMap);
@@ -173,12 +189,13 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
         runViewModel.getmMap().getUiSettings().setMyLocationButtonEnabled(true);
         runViewModel.getmMap().getUiSettings().setZoomGesturesEnabled(true);
 
-        // Start thread to update Map
-        new MapUpdate().start();
+        // Initialise and start the map update's thread
+        mapUpdate = new MapUpdate();
+        mapUpdate.start();
     }
 
     /*
-     * Thread class to update and draw on Map.
+     * A Thread class to update and draw on Map.
      * */
     private class MapUpdate extends Thread implements Runnable {
         // LatLng List for drawing a polyline
@@ -197,7 +214,8 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
     /*
     * 1. Unbind the service
-    * 2. Stop the foreground service, and unregister the notification Receiver
+    * 2. Stop the foreground service, unregister the notification Receiver and interrupt the
+    * map update thread.
     * */
     @Override
     protected void onDestroy() {
@@ -213,6 +231,9 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
                 stopService(new Intent(RunActivity.this, TrackerService.class));
                 runViewModel.setTrackerBinder(null);
                 unregisterReceiver(notificationReceiver);
+
+                mapUpdate.interrupt();
+                mapUpdate = null;
             }
         }
     }

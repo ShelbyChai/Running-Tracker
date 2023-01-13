@@ -6,7 +6,6 @@ import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.MediaStore;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -26,6 +25,7 @@ import com.example.runningtracker.viewmodel.RunRecordViewModel;
 import java.io.IOException;
 import java.util.Objects;
 
+
 public class RunRecordActivity extends AppCompatActivity {
     private RunRecordViewModel runRecordViewModel;
     ActivityRunRecordBinding activityRunRecordBinding;
@@ -36,9 +36,8 @@ public class RunRecordActivity extends AppCompatActivity {
 
         // Get viewModel and bind layout views to architecutre component
         activityRunRecordBinding = ActivityRunRecordBinding.inflate(LayoutInflater.from(this));
-        runRecordViewModel = new ViewModelProvider(this,
-                (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
-                        getInstance(this.getApplication())).get(RunRecordViewModel.class);
+        runRecordViewModel = new ViewModelProvider(this).get(RunRecordViewModel.class);
+
         activityRunRecordBinding.setLifecycleOwner(this);
         setContentView(activityRunRecordBinding.getRoot());
         activityRunRecordBinding.setViewmodel(runRecordViewModel);
@@ -58,6 +57,7 @@ public class RunRecordActivity extends AppCompatActivity {
         });
 
         // Set onClickListener for upload image button
+        // Open the image storage and let the user to pick an image
         activityRunRecordBinding.buttonUploadImage.setOnClickListener(view -> {
             Intent uploadImage = new Intent();
             uploadImage.setType("image/*");
@@ -65,7 +65,7 @@ public class RunRecordActivity extends AppCompatActivity {
             uploadImageActivityResultLauncher.launch(Intent.createChooser(uploadImage, "Select Picture"));
         });
 
-        // Set observable for image view
+        // Set observable for map snapshot and image view
         runRecordViewModel.getRun(runRecordViewModel.getRunID()).observe(this, run -> {
             try {
                 if (run.getPhoto() != null)
@@ -77,7 +77,7 @@ public class RunRecordActivity extends AppCompatActivity {
             }
         });
 
-        // Button Save onClickListener
+        // Button Save onClickListener: Update and save the information using the UPDATE database query
         activityRunRecordBinding.buttonSaveRunRecord.setOnClickListener(view -> {
             Toast.makeText(this, "Run activity information saved", Toast.LENGTH_SHORT).show();
 

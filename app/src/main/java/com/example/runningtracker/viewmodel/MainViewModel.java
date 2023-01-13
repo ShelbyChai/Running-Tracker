@@ -11,11 +11,14 @@ import com.example.runningtracker.model.repository.MyRepository;
 import java.util.List;
 
 public class MainViewModel extends ObservableViewModel {
+    // Declare Live Data required for recycler view's filtering
     private final LiveData<List<Run>> allRecentRuns;
     private final LiveData<List<Run>> allDistanceRuns;
     private final LiveData<List<Run>> allPaceRuns;
     private final LiveData<List<Run>> allCaloriesRuns;
 
+    // Constructor links repository and initialises differnt run lists and populate them
+    // with their corresponding database query data.
     public MainViewModel(@NonNull Application application) {
         super(application);
 
@@ -26,6 +29,7 @@ public class MainViewModel extends ObservableViewModel {
         allCaloriesRuns = myRepository.getCaloriesRuns();
     }
 
+    /* Getter & Setter (Repository) */
     public LiveData<List<Run>> getAllRecentRuns() {
         return allRecentRuns;
     }
