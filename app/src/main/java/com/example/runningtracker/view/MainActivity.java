@@ -218,7 +218,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 mainViewModel.getAllRecentRuns().observe(this, adapter::setData);
                 break;
             // Sort the runs by long distance
-            case"Distance":
+            case "Distance":
                 mainViewModel.getAllDistanceRuns().observe(this, adapter::setData);
                 break;
             // Sort the runs by low pace

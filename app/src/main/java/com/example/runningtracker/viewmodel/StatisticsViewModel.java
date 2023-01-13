@@ -6,6 +6,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
 import androidx.lifecycle.LiveData;
+import androidx.lifecycle.MutableLiveData;
 
 import com.example.runningtracker.BR;
 import com.example.runningtracker.model.entity.Run;
@@ -14,14 +15,16 @@ import com.jjoe64.graphview.series.DataPoint;
 import com.jjoe64.graphview.series.LineGraphSeries;
 
 import java.util.List;
+import java.util.Objects;
 
-public class StatisticsViewModel extends ObservableViewModel{
+public class StatisticsViewModel extends ObservableViewModel {
     private int runsCount;
     private int totalDistance;
     private double averagePace;
     private int totalCalories;
     private int totalDuration;
 
+    private final MutableLiveData<String> selectedSpinnerText = new MutableLiveData<>();
     private final LiveData<List<Run>> allRuns;
 
     public StatisticsViewModel(@NonNull Application application) {
@@ -61,6 +64,9 @@ public class StatisticsViewModel extends ObservableViewModel{
         }
     }
 
+    /*
+    * Plot the graph based on spinner's value (Duration, Distance, Pace & Calories)
+    * */
     public LineGraphSeries<DataPoint> plotOverallRunsGraph() {
         LineGraphSeries<DataPoint> series = new LineGraphSeries<DataPoint>();
         List<Run> runList = allRuns.getValue();
@@ -68,7 +74,24 @@ public class StatisticsViewModel extends ObservableViewModel{
         if (runsCount != 0) {
             for (int i=0; i< runsCount; i++) {
                 Run run = runList.get(i);
-                series.appendData(new DataPoint(i, run.getDistance()), true, runsCount);
+
+                switch(Objects.requireNonNull(selectedSpinnerText.getValue())) {
+                    case "Duration":
+                        series.appendData(new DataPoint(i, run.getDuration()), true, runsCount);
+                        break;
+
+                    case "Distance":
+                        series.appendData(new DataPoint(i, run.getDistance()), true, runsCount);
+                        break;
+
+                    case "Pace":
+                        series.appendData(new DataPoint(i, run.getPace()), true, runsCount);
+                        break;
+
+                    case "Calories":
+                        series.appendData(new DataPoint(i, run.getCalories()), true, runsCount);
+                        break;
+                }
             }
         }
 
@@ -76,6 +99,10 @@ public class StatisticsViewModel extends ObservableViewModel{
     }
 
     /* Getter and Setter */
+
+    public MutableLiveData<String> getSelectedSpinnerText() {
+        return selectedSpinnerText;
+    }
 
     @Bindable
     public int getRunsCount() {
