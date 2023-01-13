@@ -38,13 +38,15 @@ public interface RunDao {
     @Query("SELECT * FROM run_table ORDER BY datetime(endDateTime) DESC")
     LiveData<List<Run>> getRecentRuns();
 
-    // Query run records by longest distance
+    // Query run records by longest distance first
     @Query("SELECT * FROM run_table ORDER BY distance DESC")
     LiveData<List<Run>> getDistanceRuns();
 
+    // Query run records by lowest pace first
     @Query("SELECT * FROM run_table ORDER BY pace ASC")
     LiveData<List<Run>> getPaceRuns();
 
+    // Query run records by highest calories burned
     @Query("SELECT * FROM run_table ORDER BY calories DESC")
     LiveData<List<Run>> getCaloriesRuns();
 }

@@ -49,9 +49,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Get viewModel and bind layout views to architecutre component
         activityRunBinding = ActivityRunBinding.inflate(LayoutInflater.from(this));
-        runViewModel = new ViewModelProvider(this,
-                (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
-                        getInstance(this.getApplication())).get(RunViewModel.class);
+        runViewModel = new ViewModelProvider(this).get(RunViewModel.class);
 
         activityRunBinding.setLifecycleOwner(this);
         setContentView(activityRunBinding.getRoot());
@@ -231,6 +229,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
                 stopService(new Intent(RunActivity.this, TrackerService.class));
                 runViewModel.setTrackerBinder(null);
                 unregisterReceiver(notificationReceiver);
+                activityRunBinding.unbind();
 
                 mapUpdate.interrupt();
                 mapUpdate = null;

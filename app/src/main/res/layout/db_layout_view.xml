@@ -8,7 +8,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="15dp"
+        android:layout_margin="@dimen/default_padding_margin"
         android:orientation="vertical">
 
         <TextView
@@ -16,9 +16,9 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:text="Activity Name"
+            android:text="@string/recyclerView_textView_activity_name"
             android:textColor="@color/black"
-            android:textSize="16sp"
+            android:textSize="@dimen/textSize_default"
             android:textStyle="bold" />
 
         <TextView
@@ -26,7 +26,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:padding="2dp"
-            android:text="distance"
+            android:text="@string/recyclerView_textView_distance"
             android:textColor="@color/black"
             android:textSize="@dimen/textSize_tiny" />
 
@@ -41,7 +41,7 @@
                 android:layout_width="0dp"
                 android:layout_height="wrap_content"
                 android:layout_weight="1"
-                android:text="duration"
+                android:text="@string/recyclerView_textView_duration"
                 android:textColor="@color/black"
                 android:textSize="@dimen/textSize_tiny" />
 
@@ -49,7 +49,7 @@
                 android:id="@+id/dateTimeView"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Date"
+                android:text="@string/recyclerView_textView_date"
                 android:textColor="@color/black"
                 android:textSize="@dimen/textSize_tiny" />
 

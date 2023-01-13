@@ -26,171 +26,166 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent"
             app:navigationIcon="@drawable/ic_action_back"
-            app:title="Overall Statistics"
+            app:title="@string/statisticsActivity_top_app_bar_title"
             app:titleTextColor="@color/black" />
 
-        <LinearLayout
+        <TableLayout
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:layout_marginVertical="@dimen/default_padding_margin"
             android:gravity="center"
             android:orientation="vertical"
-            android:paddingHorizontal="15dp"
+            android:paddingHorizontal="@dimen/default_padding_margin"
             app:layout_constraintBottom_toTopOf="@id/guideline"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@id/topAppBar">
 
-            <TableLayout
+            <View
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_marginVertical="15dp">
+                android:layout_height="1dp"
+                android:background="@color/gray_opac" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_opac" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="@string/statisticsActivity_textView_distance"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="Distance (km)"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@{viewmodel.formatDistance(viewmodel.totalDistance)}"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
+            </TableRow>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@{viewmodel.formatDistance(viewmodel.totalDistance)}"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
-                </TableRow>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_opac" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_opac" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="@string/statisticsActivity_textView_average_pace"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="Avg Pace (min/km)"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@{viewmodel.formatPace(viewmodel.averagePace)}"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
+            </TableRow>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@{viewmodel.formatPace(viewmodel.averagePace)}"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
-                </TableRow>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_opac" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_opac" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="@string/statisticsActivity_textView_calories_burned"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="Calories Burned (cal)"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@{String.valueOf(viewmodel.totalCalories)}"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
+            </TableRow>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@{String.valueOf(viewmodel.totalCalories)}"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
-                </TableRow>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_opac" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_opac" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="@string/statisticsActivity_textView_time_spent"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="Time Spent"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@{viewmodel.formatTime(viewmodel.totalDuration)}"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
+            </TableRow>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@{viewmodel.formatTime(viewmodel.totalDuration)}"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
-                </TableRow>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_opac" />
 
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_opac" />
+            <TableRow
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:padding="5dp">
 
-                <TableRow
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:padding="5dp">
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:text="@string/statisticsActivity_textView_activities"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="2"
-                        android:text="Activities"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@{String.valueOf(viewmodel.runsCount)}"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_default" />
+            </TableRow>
 
-                    <TextView
-                        android:layout_width="0dp"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
-                        android:gravity="center"
-                        android:text="@{String.valueOf(viewmodel.runsCount)}"
-                        android:textColor="@color/black"
-                        android:textSize="@dimen/textSize_default" />
-                </TableRow>
-
-                <View
-                    android:layout_width="match_parent"
-                    android:layout_height="1dp"
-                    android:background="@color/gray_opac" />
-            </TableLayout>
-        </LinearLayout>
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="1dp"
+                android:background="@color/gray_opac" />
+        </TableLayout>
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
@@ -220,7 +215,7 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:orientation="vertical"
-            android:padding="15dp"
+            android:padding="@dimen/default_padding_margin"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
@@ -229,7 +224,7 @@
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:text="Summary Graph"
+                android:text="@string/statisticsActivity_textView_summary_graph"
                 android:textColor="@color/black"
                 android:textSize="@dimen/textSize_medium"
                 android:textStyle="bold" />
@@ -249,7 +244,7 @@
                     android:layout_height="50dp"
                     android:layout_weight="1"
                     android:gravity="center_vertical"
-                    android:text="Filter"
+                    android:text="@string/statisticsActivity_textView_filter"
                     android:textColor="@color/black"
                     android:textSize="@dimen/textSize_small"
                     android:textStyle="bold" />
@@ -267,7 +262,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
                 android:layout_weight="1"
-                android:padding="15dp" />
+                android:padding="@dimen/default_padding_margin" />
         </LinearLayout>
     </androidx.constraintlayout.widget.ConstraintLayout>
 </layout>

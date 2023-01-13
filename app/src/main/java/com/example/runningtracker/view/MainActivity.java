@@ -79,8 +79,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     /*
-    * Onclick: Only ask/check for Location Permission and GPS when the user starts
-    * to interact with the tracker service that requires the permission.
+    * Onclick: Only request permission for Location Permission on runtime, also check if GPS
+    * settings when the user starts to interact with the tracker service that requires the permission.
     * */
     public void onClickStartRunActivity(View view) {
         locationPermissionRequest.launch(new String[]{

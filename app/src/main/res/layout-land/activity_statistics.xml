@@ -1,0 +1,267 @@
+<?xml version="1.0" encoding="utf-8"?>
+<layout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools">
+
+    <data>
+
+        <variable
+            name="viewmodel"
+            type="com.example.runningtracker.viewmodel.StatisticsViewModel" />
+    </data>
+
+
+    <ScrollView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:fillViewport="true"
+        android:orientation="vertical"
+        tools:context=".view.StatisticsActivity">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <com.google.android.material.appbar.AppBarLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <com.google.android.material.appbar.MaterialToolbar
+                    android:id="@+id/topAppBar"
+                    android:layout_width="match_parent"
+                    android:layout_height="?attr/actionBarSize"
+                    android:background="@color/white"
+                    android:elevation="5dp"
+                    app:navigationIcon="@drawable/ic_action_back"
+                    app:title="@string/statisticsActivity_top_app_bar_title"
+                    app:titleTextColor="@color/black" />
+            </com.google.android.material.appbar.AppBarLayout>
+
+            <TableLayout
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:layout_marginVertical="@dimen/default_padding_margin"
+                android:layout_weight="3"
+                android:gravity="center"
+                android:orientation="vertical"
+                android:paddingHorizontal="@dimen/default_padding_margin">
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_opac" />
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/statisticsActivity_textView_distance"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@{viewmodel.formatDistance(viewmodel.totalDistance)}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_opac" />
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/statisticsActivity_textView_average_pace"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@{viewmodel.formatPace(viewmodel.averagePace)}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_opac" />
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/statisticsActivity_textView_calories_burned"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@{String.valueOf(viewmodel.totalCalories)}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_opac" />
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/statisticsActivity_textView_time_spent"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@{viewmodel.formatTime(viewmodel.totalDuration)}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_opac" />
+
+                <TableRow
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:padding="5dp">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="2"
+                        android:text="@string/statisticsActivity_textView_activities"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:gravity="center"
+                        android:text="@{String.valueOf(viewmodel.runsCount)}"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_default" />
+                </TableRow>
+
+                <View
+                    android:layout_width="match_parent"
+                    android:layout_height="1dp"
+                    android:background="@color/gray_opac" />
+            </TableLayout>
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.40" />
+
+            <View
+                android:layout_width="match_parent"
+                android:layout_height="0dp"
+                android:background="@color/gray_opac" />
+
+            <androidx.constraintlayout.widget.Guideline
+                android:id="@+id/guideline2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                app:layout_constraintGuide_percent="0.43" />
+
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:padding="@dimen/default_padding_margin">
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/statisticsActivity_textView_summary_graph"
+                    android:textColor="@color/black"
+                    android:textSize="@dimen/textSize_medium"
+                    android:textStyle="bold" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="horizontal">
+
+                    <View
+                        android:layout_width="0dp"
+                        android:layout_height="match_parent"
+                        android:layout_weight="3" />
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="1"
+                        android:gravity="center_vertical"
+                        android:text="@string/statisticsActivity_textView_filter"
+                        android:textColor="@color/black"
+                        android:textSize="@dimen/textSize_small"
+                        android:textStyle="bold" />
+
+                    <Spinner
+                        android:id="@+id/spinner_graph"
+                        android:layout_width="0dp"
+                        android:layout_height="50dp"
+                        android:layout_weight="2" />
+
+                </LinearLayout>
+
+                <com.jjoe64.graphview.GraphView
+                    android:id="@+id/graphViewRuns"
+                    android:layout_width="match_parent"
+                    android:layout_height="300dp"
+                    android:padding="@dimen/default_padding_margin" />
+            </LinearLayout>
+        </LinearLayout>
+    </ScrollView>
+</layout>

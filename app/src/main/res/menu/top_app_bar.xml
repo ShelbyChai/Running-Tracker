@@ -6,8 +6,8 @@
         android:id="@+id/deleteRunActivity"
         android:icon="@drawable/ic_action_delete"
         android:iconTint="@color/black"
-        android:title="Delete"
-        android:contentDescription="Delete Run Activity"
+        android:title="@string/topAppBar_delete"
+        android:contentDescription="@string/topAppBar_description_delete"
         app:showAsAction="ifRoom" />
 
 </menu>

@@ -12,6 +12,7 @@ import android.util.Log;
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
 import androidx.lifecycle.MutableLiveData;
+import androidx.lifecycle.SavedStateHandle;
 
 import com.example.runningtracker.BR;
 import com.example.runningtracker.model.entity.Run;
@@ -33,6 +34,9 @@ import java.util.List;
 import java.util.Objects;
 
 public class RunViewModel extends ObservableViewModel {
+    // Declare saveStateHandle to persist the data
+    private final SavedStateHandle savedStateHandle;
+
     /* Binder */
     private TrackerService.MyBinder trackerBinder = null;
     private TrackerCallback trackerCallback;
@@ -40,7 +44,7 @@ public class RunViewModel extends ObservableViewModel {
     /* Declare required variables */
     private GoogleMap mMap;
     private LatLng latLng;
-    private boolean running;
+    private boolean isRunning;
 
     /* Bindable Object */
     // Declare the Mutable Live Data required for displaying on the Run Activity
@@ -72,18 +76,28 @@ public class RunViewModel extends ObservableViewModel {
 
     // Constructor links repository and start updating the UI via the tracker callback
     // after the viewModel is initialised
-    public RunViewModel(@NonNull Application application) {
+    public RunViewModel(@NonNull Application application, SavedStateHandle savedStateHandle) {
         super(application);
+        this.savedStateHandle = savedStateHandle;
 
         myRepository = new MyRepository(application);
-        running = true;
+        isRunning = true;
+
+        if (this.savedStateHandle.contains("latLng")) {
+            latLng = this.savedStateHandle.get("latLng");
+        }
+
+        if (this.savedStateHandle.contains("isRunning")) {
+            isRunning = Boolean.TRUE.equals(this.savedStateHandle.get("isRunning"));
+        }
 
         updateRunData();
     }
 
     /*
      * 1. Set the latitude and longitude of the current location for map usage.
-     * 2. Update the current distance vairable.
+     * 2. Update the current distance vairable (Do not add to distance if the sudden change is
+     * 100m or higher)
      * 3. Increment the duration variable.
      * 4. Calculate the current pace using the distance / duration.
      * 5. Calculate the total calories (60 cal per hour).
@@ -105,11 +119,14 @@ public class RunViewModel extends ObservableViewModel {
 
                 if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_RUNNING)) {
                     // 1
-                    latLng = new LatLng(location.getLatitude(), location.getLongitude());
+                    setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
 
                     // 2
-                    if (prevLocation != null)
-                        distance += Math.round(prevLocation.distanceTo(location));
+                    if (prevLocation != null) {
+                        if (Math.round(prevLocation.distanceTo(location)) < 100) {
+                            distance += Math.round(prevLocation.distanceTo(location));
+                        }
+                    }
 
                     // 3
                     duration += 1;
@@ -150,7 +167,7 @@ public class RunViewModel extends ObservableViewModel {
     public void finishRun() {
         if (trackerBinder != null) {
             // 1
-            running = false;
+            isRunning = false;
             trackerBinder.stopRunning();
 
             // 2
@@ -252,12 +269,18 @@ public class RunViewModel extends ObservableViewModel {
         this.mMap = mMap;
     }
 
+    public void setLatLng(LatLng latLng) {
+        this.latLng = latLng;
+        this.savedStateHandle.set("latLng", latLng);
+    }
+
     public boolean isRunning() {
-        return running;
+        return isRunning;
     }
 
     public void setRunning(boolean running) {
-        this.running = running;
+        this.isRunning = running;
+        this.savedStateHandle.set("isRunning", isRunning);
     }
 
     @Bindable

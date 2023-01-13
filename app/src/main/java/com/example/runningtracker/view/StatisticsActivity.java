@@ -19,7 +19,6 @@ import com.example.runningtracker.model.RunRoomDatabase;
 import com.example.runningtracker.viewmodel.StatisticsViewModel;
 
 public class StatisticsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{
-
     private ActivityStatisticsBinding activityStatisticsBinding;
     private StatisticsViewModel statisticsViewModel;
 
@@ -29,15 +28,14 @@ public class StatisticsActivity extends AppCompatActivity implements AdapterView
 
         // Create viewModel and bind layout views to architecutre component
         activityStatisticsBinding = ActivityStatisticsBinding.inflate(LayoutInflater.from(this));
-        statisticsViewModel = new ViewModelProvider((ViewModelStoreOwner) this,
-                (ViewModelProvider.Factory) ViewModelProvider.AndroidViewModelFactory.
-                        getInstance(this.getApplication())).get(StatisticsViewModel.class);
+        statisticsViewModel = new ViewModelProvider(this).get(StatisticsViewModel.class);
+
         activityStatisticsBinding.setLifecycleOwner(this);
         setContentView(activityStatisticsBinding.getRoot());
         activityStatisticsBinding.setViewmodel(statisticsViewModel);
 
 
-        // Set onClickListener for top app bar
+        // Set onClickListener for top app bar's navigation button, destroy this activity if clicked
         setSupportActionBar(activityStatisticsBinding.topAppBar);
         activityStatisticsBinding.topAppBar.setNavigationOnClickListener(view -> {
             finish();
@@ -73,11 +71,16 @@ public class StatisticsActivity extends AppCompatActivity implements AdapterView
         });
     }
 
+    /*
+     * When a spinner item is selected, change the Graph view based on the value of the filter.
+     * Filter type contains (Distance, Duratioin, Pace & Calories)
+     * */
     @Override
     public void onItemSelected(AdapterView<?> adapterView, View view, int i, long l) {
         String selectedFilter = adapterView.getItemAtPosition(i).toString();
 
         Toast.makeText(getApplicationContext(), "Show graph by " + selectedFilter, Toast.LENGTH_SHORT).show();
+        // Set the currentSpinnerText
         statisticsViewModel.getSelectedSpinnerText().setValue(selectedFilter);
     }
 

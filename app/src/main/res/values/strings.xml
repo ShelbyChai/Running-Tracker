@@ -34,6 +34,26 @@
     <string name="runRecordActivity_button_upload_image">Upload Image</string>
     <string name="runRecordActivity_button_save">Save</string>
 
+    <!-- Statistics Activity -->
+    <string name="statisticsActivity_textView_distance">Distance (km)</string>
+    <string name="statisticsActivity_textView_average_pace">Avg Pace (min/km)</string>
+    <string name="statisticsActivity_textView_calories_burned">Calories Burned (cal)</string>
+    <string name="statisticsActivity_textView_time_spent">Time Spent</string>
+    <string name="statisticsActivity_textView_activities">Activities</string>
+    <string name="statisticsActivity_textView_summary_graph">Summary Graph</string>
+    <string name="statisticsActivity_textView_filter">Filter</string>
+    <string name="statisticsActivity_top_app_bar_title">Overall Statistics</string>
+
+    <!-- Recycler View component layout -->
+    <string name="recyclerView_textView_activity_name">Activity Name</string>
+    <string name="recyclerView_textView_distance">distance</string>
+    <string name="recyclerView_textView_duration">duration</string>
+    <string name="recyclerView_textView_date">Date</string>
+
+    <!-- Top App Bar -->
+    <string name="topAppBar_delete">Delete</string>
+    <string name="topAppBar_description_delete">Delete Run Activity</string>
+
     <!-- Spinner Main Activity Recycler View String Array -->
     <string-array name="run_sort">
         <item>Recent</item>
