@@ -227,8 +227,6 @@ public class RunViewModel extends ObservableViewModel {
 
             // 1
             if (Objects.equals(statusService, TrackerService.SERVICE_RUNNING)) {
-                Log.d("comp3018", "Map running");
-
                 PolylineOptions options = new PolylineOptions().color(Color.RED).width(10).addAll(latLngList);
                 mMap.addPolyline(options);
                 mMap.addMarker(new MarkerOptions().position(latLngList.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));

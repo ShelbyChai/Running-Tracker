@@ -10,11 +10,13 @@ import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.Binder;
+import android.os.Bundle;
 import android.os.IBinder;
 import android.os.IInterface;
 import android.os.RemoteCallbackList;
 import android.util.Log;
 
+import androidx.annotation.NonNull;
 import androidx.core.app.NotificationCompat;
 
 import com.example.runningtracker.R;
@@ -121,6 +123,24 @@ public class TrackerService extends Service {
             Intent updateNotificationText = new Intent(NOTIFICATION_CONTENT_UPDATE);
             sendBroadcast(updateNotificationText);
         }
+
+        @Override
+        public void onStatusChanged(String provider, int status, Bundle extras) {
+            // information about the signal, i.e. number of satellite
+            Log.d("comp3018", "onStatusChanged: " + provider + " " + status);
+        }
+
+        @Override
+        public void onProviderEnabled(@NonNull String provider) {
+            // the user enabled (for example) the GPS
+            Log.d("comp3018", "onProviderEnabled: " + provider);
+        }
+
+        @Override
+        public void onProviderDisabled(@NonNull String provider) {
+            // the user disabled (for example) the GPS
+            Log.d("comp3018", "onProviderDisabled: " + provider);
+        }
     }
 
     /* Service Lifecycle */
@@ -148,10 +168,12 @@ public class TrackerService extends Service {
             serviceStatus = SERVICE_RUNNING;
             // Request for location update with 1 second interval and minimum distance travel of 0
             try {
-                locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
-                        1000,
-                        0,
-                        locationListener);
+                if (locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+                    locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,
+                            1000,
+                            0,
+                            locationListener);
+                }
             } catch(SecurityException e) {
                 Log.d("comp3018", e.toString());
             }
