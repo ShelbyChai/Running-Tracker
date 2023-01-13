@@ -5,9 +5,11 @@ import androidx.lifecycle.ViewModelProvider;
 import androidx.lifecycle.ViewModelStoreOwner;
 
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 
 import com.example.runningtracker.databinding.ActivityStatisticsBinding;
+import com.example.runningtracker.model.RunRoomDatabase;
 import com.example.runningtracker.viewmodel.StatisticsViewModel;
 
 public class StatisticsActivity extends AppCompatActivity {
@@ -32,5 +34,14 @@ public class StatisticsActivity extends AppCompatActivity {
             finish();
         });
 
+
+        // Observe runs LiveData to get all run objects
+        statisticsViewModel.getAllRecentRuns().observe(this, runs -> {
+            if (runs != null) {
+                // Set the number of run activities
+                statisticsViewModel.setRunsCount(runs.size());
+                statisticsViewModel.calculateRunsAverages();
+            }
+        });
     }
 }
