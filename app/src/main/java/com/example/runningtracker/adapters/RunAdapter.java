@@ -9,7 +9,7 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.runningtracker.Helper.RunHelper;
+import com.example.runningtracker.helper.RunHelper;
 import com.example.runningtracker.R;
 import com.example.runningtracker.model.entity.Run;
 

@@ -2,8 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
     <!-- For map display -->
-    <uses-permission android:name="android.permission.INTERNET" /> <!-- For uploading images for run activity -->
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" /> <!-- Types of location access: Accuracy -->
+    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE" />
@@ -20,10 +19,6 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.RunningTracker"
         tools:targetApi="31">
-
-        <meta-data
-            android:name="com.google.android.geo.API_KEY"
-            android:value="AIzaSyDpp8isYxspmB-QztIj-1h3Or0cRi3X7pc" />
 
         <activity
             android:name=".view.MainActivity"
@@ -70,6 +65,17 @@
         <service
             android:name=".service.TrackerService"
             android:foregroundServiceType="location" />
+
+        <provider
+            android:name="com.example.runningtracker.contentprovider.RunProvider"
+            android:authorities="com.example.runningtracker.contentprovider.RunProvider"
+            android:exported="true"
+            android:multiprocess="true" />
+
+        <meta-data
+            android:name="com.google.android.geo.API_KEY"
+            android:value="AIzaSyDpp8isYxspmB-QztIj-1h3Or0cRi3X7pc" />
+
     </application>
 
 </manifest>

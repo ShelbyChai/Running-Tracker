@@ -1,7 +1,11 @@
-package com.example.runningtracker.Helper;
+package com.example.runningtracker.helper;
 
 import android.annotation.SuppressLint;
 
+/*
+* This class contains static method to help with the formatting of
+* duration and distance.
+* */
 public class RunHelper {
 
     @SuppressLint("DefaultLocale")
