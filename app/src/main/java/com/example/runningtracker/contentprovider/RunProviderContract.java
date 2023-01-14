@@ -8,7 +8,7 @@ public class RunProviderContract {
     public static final Uri RUN_URI = Uri.parse("content://"+AUTHORITY+"/run");
     public static final Uri ALL_URI = Uri.parse("content://"+AUTHORITY+"/");
 
-    public static final String RUN_ID = "runID";
+    public static final String _ID = "runID";
     public static final String NAME = "name";
     public static final String DATE_TIME_FORMATTED = "dateTimeFormatted";
     public static final String END_DATE_TIME = "endDateTime";

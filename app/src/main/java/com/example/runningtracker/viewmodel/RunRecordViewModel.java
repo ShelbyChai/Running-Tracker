@@ -21,7 +21,7 @@ public class RunRecordViewModel extends ObservableViewModel {
     private final SavedStateHandle savedStateHandle;
 
     /* Instantiate the id of the run record and the current run record's data */
-    private String runID;
+    private long runID;
     private LiveData<Run> currentRun;
     private final MyRepository myRepository;
 
@@ -53,11 +53,11 @@ public class RunRecordViewModel extends ObservableViewModel {
 
     /* Getter & Setter */
 
-    public String getRunID() {
+    public long getRunID() {
         return runID;
     }
 
-    public void setRunID(String runID) {
+    public void setRunID(long runID) {
         this.runID = runID;
         this.savedStateHandle.set("runID", runID);
     }
@@ -73,15 +73,15 @@ public class RunRecordViewModel extends ObservableViewModel {
 
     /* Getter & Setter (Repository) */
 
-    public void update(String runID, String runName, float runRating, String runNote, byte[] runPhoto) {
+    public void update(long runID, String runName, float runRating, String runNote, byte[] runPhoto) {
         myRepository.update(runID, runName, runRating, runNote, runPhoto);
     }
 
-    public void delete(String runID) {
+    public void delete(long runID) {
         myRepository.delete(runID);
     }
 
-    public LiveData<Run> getRun(String runID) {
+    public LiveData<Run> getRun(long runID) {
         return myRepository.getRun(runID);
     }
 }

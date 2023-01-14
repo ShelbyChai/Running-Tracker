@@ -1,10 +1,16 @@
 package com.example.runningtracker.model.daos;
 
+import android.content.ContentValues;
+import android.database.Cursor;
+
+import androidx.annotation.Nullable;
 import androidx.lifecycle.LiveData;
 import androidx.room.Dao;
+import androidx.room.Delete;
 import androidx.room.Insert;
 import androidx.room.OnConflictStrategy;
 import androidx.room.Query;
+import androidx.room.Update;
 
 import com.example.runningtracker.model.entity.Run;
 
@@ -20,15 +26,15 @@ public interface RunDao {
             "rating = :runRating," +
             "note = :runNote," +
             "photo = :photo " +
-            "WHERE runID = :runID")
-    void update(String runID, String runName, float runRating, String runNote, byte[] photo);
+            "WHERE run_ID = :runID")
+    void update(long runID, String runName, float runRating, String runNote, byte[] photo);
 
-    @Query("DELETE FROM run_table WHERE runID = :runID")
-    void delete(String runID);
+    @Query("DELETE FROM run_table WHERE run_ID = :runID")
+    void delete(long runID);
 
     // Query the specific run record
-    @Query("SELECT * FROM run_table WHERE runID = :runID")
-    LiveData<Run> getRun(String runID);
+    @Query("SELECT * FROM run_table WHERE run_ID = :runID")
+    LiveData<Run> getRun(long runID);
 
     // General query of all the run records
     @Query("SELECT * FROM run_table")
@@ -49,4 +55,30 @@ public interface RunDao {
     // Query run records by highest calories burned
     @Query("SELECT * FROM run_table ORDER BY calories DESC")
     LiveData<List<Run>> getCaloriesRuns();
+
+    /* Cursor query for content provider */
+
+    // Query for single record
+    @Query("SELECT * FROM run_table WHERE run_ID = :run_ID")
+    Cursor getCursorSelectedRun(long run_ID);
+
+    // Query for entire table
+    @Query("SELECT * FROM run_table")
+    Cursor getCursorRuns();
+
+    // Insert one Run record
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    long insertCPRun(Run run);
+
+    // Delete one Run record
+    @Query("DELETE FROM run_table WHERE run_ID = :runID")
+    int deleteCPRun(int runID);
+
+    // Delete all Run record
+    @Query("DELETE FROM run_table")
+    int deleteCPAllRuns();
+
+    // Update one Run record
+    @Update(entity = Run.class)
+    int updateCPRun(Run run);
 }

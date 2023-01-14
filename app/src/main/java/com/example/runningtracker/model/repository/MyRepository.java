@@ -30,24 +30,18 @@ public class MyRepository {
     }
 
     public void insert(Run run) {
-        RunRoomDatabase.databaseWriteExecutor.execute(() -> {
-            runDao.insert(run);
-        });
+        RunRoomDatabase.databaseWriteExecutor.execute(() -> runDao.insert(run));
     }
 
-    public void update(String runID, String runName, float runRating, String runNote, byte[] runPhoto) {
-        RunRoomDatabase.databaseWriteExecutor.execute(() -> {
-            runDao.update(runID, runName, runRating, runNote, runPhoto);
-        });
+    public void update(long runID, String runName, float runRating, String runNote, byte[] runPhoto) {
+        RunRoomDatabase.databaseWriteExecutor.execute(() -> runDao.update(runID, runName, runRating, runNote, runPhoto));
     }
 
-    public void delete(String runID) {
-        RunRoomDatabase.databaseWriteExecutor.execute(() -> {
-            runDao.delete(runID);
-        });
+    public void delete(long runID) {
+        RunRoomDatabase.databaseWriteExecutor.execute(() -> runDao.delete(runID));
     }
 
-    public LiveData<Run> getRun(String runID) {
+    public LiveData<Run> getRun(long runID) {
         return runDao.getRun(runID);
     }
 

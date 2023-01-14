@@ -45,16 +45,14 @@ public class RunRecordActivity extends AppCompatActivity {
 
         // Get run ID from intent to display the information of the Run
         Intent intent = getIntent();
-        runRecordViewModel.setRunID(intent.getStringExtra(RunActivity.KEY_RUNID));
+        runRecordViewModel.setRunID(intent.getLongExtra(RunActivity.KEY_RUNID, 0));
         // Assign the currentRunData and display data via DataBinding
         runRecordViewModel.setCurrentRun(runRecordViewModel.getRun(runRecordViewModel.getRunID()));
 
 
         // Set onClickListener for top app bar
         setSupportActionBar(activityRunRecordBinding.topAppBar);
-        activityRunRecordBinding.topAppBar.setNavigationOnClickListener(view -> {
-            finish();
-        });
+        activityRunRecordBinding.topAppBar.setNavigationOnClickListener(view -> finish());
 
         // Set onClickListener for upload image button
         // Open the image storage and let the user to pick an image
@@ -81,7 +79,7 @@ public class RunRecordActivity extends AppCompatActivity {
         activityRunRecordBinding.buttonSaveRunRecord.setOnClickListener(view -> {
             Toast.makeText(this, "Run activity information saved", Toast.LENGTH_SHORT).show();
 
-            String runID = Objects.requireNonNull(runRecordViewModel.getCurrentRun().getValue()).getRunID();
+            long runID = Objects.requireNonNull(runRecordViewModel.getCurrentRun().getValue()).getRun_ID();
             String runName = Objects.requireNonNull(activityRunRecordBinding.editTextRunName.getText()).toString();
             float runRating = activityRunRecordBinding.ratingBarRun.getRating();
             String runNote = Objects.requireNonNull(activityRunRecordBinding.editTextRunNote.getText()).toString();

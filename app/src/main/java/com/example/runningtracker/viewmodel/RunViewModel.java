@@ -28,7 +28,6 @@ import com.google.android.gms.maps.model.PolylineOptions;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -189,7 +188,6 @@ public class RunViewModel extends ObservableViewModel {
         @Override
         public void onSnapshotReady(Bitmap snapshot) {
             bitmap = snapshot;
-            String uniqueRunID = String.valueOf(Calendar.getInstance().getTime());
 
             String endTime = formatter.format(curDate);
             String dateTimeFormatted = formatterName.format(curDate);
@@ -206,8 +204,7 @@ public class RunViewModel extends ObservableViewModel {
             }
 
             // Insert the new run record data
-            insert(new Run(uniqueRunID,
-                    "Run Activity",
+            insert(new Run("Run Activity",
                     endTime,
                     dateTimeFormatted,
                     runDuration.getValue(),

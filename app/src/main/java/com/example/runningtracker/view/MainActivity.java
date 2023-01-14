@@ -70,8 +70,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         // pass the primary key of the run (runID) via intent to RunRecordActivity
         // in order to display the single run's record/information.
         adapter = new RunAdapter(this, run -> {
+            Log.d("comp3018", "Run ID: " + run.getRun_ID());
             Intent intent = new Intent(MainActivity.this, RunRecordActivity.class);
-            intent.putExtra(RunActivity.KEY_RUNID, run.getRunID());
+            intent.putExtra(RunActivity.KEY_RUNID, run.getRun_ID());
             startActivity(intent);
         });
         activityMainBinding.recyclerView.setAdapter(adapter);

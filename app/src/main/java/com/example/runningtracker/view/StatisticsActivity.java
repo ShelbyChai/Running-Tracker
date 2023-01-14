@@ -37,9 +37,7 @@ public class StatisticsActivity extends AppCompatActivity implements AdapterView
 
         // Set onClickListener for top app bar's navigation button, destroy this activity if clicked
         setSupportActionBar(activityStatisticsBinding.topAppBar);
-        activityStatisticsBinding.topAppBar.setNavigationOnClickListener(view -> {
-            finish();
-        });
+        activityStatisticsBinding.topAppBar.setNavigationOnClickListener(view -> finish());
 
 
         // Observe runs LiveData to get all run objects
@@ -63,7 +61,7 @@ public class StatisticsActivity extends AppCompatActivity implements AdapterView
         statisticsViewModel.getSelectedSpinnerText().observe(this, string -> {
             activityStatisticsBinding.graphViewRuns.removeAllSeries();
             activityStatisticsBinding.graphViewRuns.addSeries(statisticsViewModel.plotOverallRunsGraph());
-            activityStatisticsBinding.graphViewRuns.setTitle(string + " - Across all runs");
+            activityStatisticsBinding.graphViewRuns.setTitle(string + " - Across all runs (Oldest to Recent)");
             activityStatisticsBinding.graphViewRuns.getGridLabelRenderer().setVerticalAxisTitle(string);
             activityStatisticsBinding.graphViewRuns.getGridLabelRenderer().setHorizontalAxisTitle("Runs");
             activityStatisticsBinding.graphViewRuns.getGridLabelRenderer().setNumHorizontalLabels(statisticsViewModel.getRunsCount());
