@@ -11,6 +11,7 @@ import android.os.IBinder;
 import android.os.IInterface;
 import android.os.Looper;
 import android.os.RemoteCallbackList;
+import android.os.SystemClock;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
@@ -36,7 +37,14 @@ public class TrackerService extends Service {
     public final static int NOTIFICATION_ID = 1;
 
     private final RemoteCallbackList<MyBinder> remoteCallbackList = new RemoteCallbackList<MyBinder>();
+    // Contain the current service status, whether its pause or running
     private String serviceStatus;
+
+    /* Declare timer thread, timer and current location variables*/
+    private TimerThread timerThread;
+    private int timer;
+    private boolean isTimerThreadRunning;
+    private Location currentLocation;
 
     /* Declare location variable */
     private FusedLocationProviderClient fusedLocationClient;
@@ -106,12 +114,37 @@ public class TrackerService extends Service {
     /*
      * Callback method to broadcast the location
      * */
-    private void doCallbacks(Location location) {
+    private void doCallbacks(Location location, int timer) {
         final int n = remoteCallbackList.beginBroadcast();
         for (int i = 0; i < n; i++) {
-            remoteCallbackList.getBroadcastItem(i).trackerCallback.runningTrackerLocationEvent(location);
+            remoteCallbackList.getBroadcastItem(i).trackerCallback.runningTrackerLocationEvent(location, timer);
         }
         remoteCallbackList.finishBroadcast();
+    }
+
+    /*
+     * A timer thread to do callback of the current time, current location and broadcast intent
+     * to update notification content text while the service is running */
+    private class TimerThread extends Thread implements Runnable {
+        @Override
+        public void run() {
+            while (isTimerThreadRunning) {
+                Log.d("comp3018", "TimerThread: " + timer);
+                SystemClock.sleep(1000);
+
+                if (serviceStatus != null) {
+                    if (!Objects.equals(serviceStatus, SERVICE_PAUSE)) {
+                        timer += 1;
+
+                        doCallbacks(currentLocation, timer);
+
+                        // Broadcast intent to update notification Content text in Run Activity
+                        Intent updateNotificationText = new Intent(NOTIFICATION_CONTENT_UPDATE);
+                        sendBroadcast(updateNotificationText);
+                    }
+                }
+            }
+        }
     }
 
     /* Service Lifecycle */
@@ -121,32 +154,36 @@ public class TrackerService extends Service {
         Log.d("comp3018", "TrackerService onCreate");
         super.onCreate();
 
+        serviceStatus = SERVICE_PAUSE;
+        isTimerThreadRunning = true;
+        timer = 0;
+
         fusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
 
         // Request location update for every 1 second
         locationRequest = new LocationRequest.Builder(Priority.PRIORITY_HIGH_ACCURACY, 1000)
                 .setMinUpdateIntervalMillis(1000).build();
 
+        // Set the current location from the location callback
         locationCallback = new LocationCallback() {
             @Override
             public void onLocationResult(@NonNull LocationResult locationResult) {
                 for (Location location : locationResult.getLocations()) {
                     Log.d("comp3018", "location " + location.toString());
-                    doCallbacks(location);
-
-                    // Broadcast intent to update notification Content text in Run Activity
-                    Intent updateNotificationText = new Intent(NOTIFICATION_CONTENT_UPDATE);
-                    sendBroadcast(updateNotificationText);
+                    currentLocation = location;
                 }
             }
         };
 
-        serviceStatus = SERVICE_PAUSE;
-
         // Start the notification and location update
         buildNotificationChannel();
-        startLocationUpdate();
         buildNotification();
+        startLocationUpdate();
+
+
+        // Start the timer thread
+        timerThread = new TimerThread();
+        timerThread.start();
     }
 
     /* Location update buttons */
@@ -159,7 +196,7 @@ public class TrackerService extends Service {
                 fusedLocationClient.requestLocationUpdates(locationRequest,
                         locationCallback,
                         Looper.getMainLooper());
-            } catch(SecurityException e) {
+            } catch (SecurityException e) {
                 // lacking permission to access location
             }
         }
@@ -170,13 +207,20 @@ public class TrackerService extends Service {
         if (!Objects.equals(serviceStatus, SERVICE_PAUSE) && fusedLocationClient != null) {
             serviceStatus = SERVICE_PAUSE;
             // Pass null location to reset previous location to null
-            doCallbacks(null);
+            doCallbacks(null, timer);
             fusedLocationClient.removeLocationUpdates(locationCallback);
         }
     }
 
-    // Remove the location update, foreground service and notification
+    // Remove the thread, location update, foreground service and notification
     private void finishLocationUpdate() {
+        // Interrupt the timer thread and set the its running variable to false
+        if (timerThread != null) {
+            timerThread.interrupt();
+            isTimerThreadRunning = false;
+            timerThread = null;
+        }
+
         if (fusedLocationClient != null) {
             serviceStatus = SERVICE_FINISH;
             fusedLocationClient.removeLocationUpdates(locationCallback);
@@ -206,14 +250,14 @@ public class TrackerService extends Service {
     }
 
     /*
-    * Build and starts a new foreground notification with a pending intent that
-    * return the user to the Run Activity.
-    * 1. Notification Button: Add service control buttons that invoke intents on the Tracker Service.
-    * 2. Start Foreground Service and build the notification
-    * */
+     * Build and starts a new foreground notification with a pending intent that
+     * return the user to the Run Activity.
+     * 1. Notification Button: Add service control buttons that invoke intents on the Tracker Service.
+     * 2. Start Foreground Service and build the notification
+     * */
     private void buildNotification() {
         Intent notificationIntent = new Intent(this, RunActivity.class);
-        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP|Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        notificationIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | Intent.FLAG_ACTIVITY_SINGLE_TOP);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, PendingIntent.FLAG_IMMUTABLE);
         notificationBuilder = new NotificationCompat.Builder(this, NOTIFICATION_CHANNEL_ID).
                 setPriority(NotificationCompat.PRIORITY_HIGH).
@@ -221,7 +265,7 @@ public class TrackerService extends Service {
                 setSmallIcon(R.drawable.ic_launcher_icon_foreground).
                 setContentIntent(pendingIntent).
                 // 1
-                addAction(R.drawable.ic_notification_play, SERVICE_RUNNING, notificationButtons(SERVICE_RUNNING)).
+                        addAction(R.drawable.ic_notification_play, SERVICE_RUNNING, notificationButtons(SERVICE_RUNNING)).
                 addAction(R.drawable.ic_notification_pause, SERVICE_PAUSE, notificationButtons(SERVICE_PAUSE)).
                 addAction(R.drawable.ic_notification_stop, SERVICE_FINISH, notificationButtons(SERVICE_FINISH)).
                 setContentText("Duration: 00:00:00, Distance: 0.00 km");

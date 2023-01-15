@@ -65,15 +65,19 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
         // Set onClick Listener for pause, resume and stop buttons
         activityRunBinding.buttonPauseTracker.setOnClickListener(view -> {
-            runViewModel.getTrackerBinder().pauseRunning();
-            showResumeButton();
-            Toast.makeText(this, "Run Activity paused", Toast.LENGTH_SHORT).show();
+            if (runViewModel.getTrackerBinder() != null) {
+                runViewModel.getTrackerBinder().pauseRunning();
+                showResumeButton();
+                Toast.makeText(this, "Run Activity paused", Toast.LENGTH_SHORT).show();
+            }
         });
 
         activityRunBinding.buttonResumeTracker.setOnClickListener(view -> {
-            runViewModel.getTrackerBinder().startRunning();
-            showPauseButton();
-            Toast.makeText(this, "Run Activity resumed", Toast.LENGTH_SHORT).show();
+            if (runViewModel.getTrackerBinder() != null) {
+                runViewModel.getTrackerBinder().startRunning();
+                showPauseButton();
+                Toast.makeText(this, "Run Activity resumed", Toast.LENGTH_SHORT).show();
+            }
         });
 
         activityRunBinding.buttonStopTracker.setOnClickListener(view -> {
@@ -134,15 +138,19 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
                 // 1
                 case TrackerService.SERVICE_RUNNING:
                     Log.d("comp3018", "Notification resume pressed");
-                    runViewModel.getTrackerBinder().startRunning();
-                    showPauseButton();
+                    if (runViewModel.getTrackerBinder() != null) {
+                        runViewModel.getTrackerBinder().startRunning();
+                        showPauseButton();
+                    }
 
                     break;
                     // 2
                 case TrackerService.SERVICE_PAUSE:
                     Log.d("comp3018", "Notification pause pressed");
-                    runViewModel.getTrackerBinder().pauseRunning();
-                    showResumeButton();
+                    if (runViewModel.getTrackerBinder() != null) {
+                        runViewModel.getTrackerBinder().pauseRunning();
+                        showResumeButton();
+                    }
 
                     break;
                     // 3
@@ -154,8 +162,9 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
                     // 4
                 case TrackerService.NOTIFICATION_CONTENT_UPDATE:
                     Log.d("comp3018", "Notification content text updated");
-                    runViewModel.getTrackerBinder().getNotificationManager().notify(TrackerService.NOTIFICATION_ID,
-                            updateNotificationContent());
+                    if (runViewModel.getTrackerBinder() != null)
+                        runViewModel.getTrackerBinder().getNotificationManager().notify(TrackerService.NOTIFICATION_ID,
+                                updateNotificationContent());
 
                     break;
                 default:
@@ -201,7 +210,7 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
 
         @Override
         public void run() {
-            while (runViewModel.isRunning()) {
+            while (runViewModel.isMapRunning()) {
                 runOnUiThread(() -> {
                     runViewModel.drawPolylineOnMap(latLngList);
                 });
@@ -224,13 +233,12 @@ public class RunActivity extends AppCompatActivity implements OnMapReadyCallback
             unbindService(runViewModel.getServiceConnection());
             // 2
             if (isFinishing()) {
-                runViewModel.setRunning(false);
+                runViewModel.setMapRunning(false);
                 runViewModel.setServiceConnection(null);
                 stopService(new Intent(RunActivity.this, TrackerService.class));
                 runViewModel.setTrackerBinder(null);
                 unregisterReceiver(notificationReceiver);
                 activityRunBinding.unbind();
-
                 mapUpdate.interrupt();
                 mapUpdate = null;
             }

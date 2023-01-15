@@ -44,10 +44,12 @@ public class RunViewModel extends ObservableViewModel {
     * Declare Google Map associated variables
     * latLng (pass to google map for update)
     * isRunning (stop the google map update if set to false)
+    * prevLocation (stores the previous callback's location)
     * */
     private GoogleMap mMap;
     private LatLng latLng;
-    private boolean isRunning;
+    private boolean isMapRunning;
+    private Location prevLocation;
 
     /* Bindable Object */
     // Declare the Mutable Live Data required for displaying on the Run Activity
@@ -84,14 +86,14 @@ public class RunViewModel extends ObservableViewModel {
         this.savedStateHandle = savedStateHandle;
 
         myRepository = new MyRepository(application);
-        isRunning = true;
+        isMapRunning = true;
 
         if (this.savedStateHandle.contains("latLng")) {
             latLng = this.savedStateHandle.get("latLng");
         }
 
         if (this.savedStateHandle.contains("isRunning")) {
-            isRunning = Boolean.TRUE.equals(this.savedStateHandle.get("isRunning"));
+            isMapRunning = Boolean.TRUE.equals(this.savedStateHandle.get("isRunning"));
         }
 
         updateRunData();
@@ -99,9 +101,8 @@ public class RunViewModel extends ObservableViewModel {
 
     /*
      * 1. Set the latitude and longitude of the current location for map usage.
-     * 2. Update the current distance vairable (Do not add to distance if the sudden change is
-     * 100m or higher)
-     * 3. Increment the duration variable.
+     * 2. Update the current distance vairable.
+     * 3. Assigned the duration based on the timer from the tracker service.
      * 4. Calculate the current pace using the distance / duration.
      * 5. Calculate the total calories (60 cal per hour).
      * 6. Set the total distance, duration, calories and pace and notify observer for changes.
@@ -111,56 +112,54 @@ public class RunViewModel extends ObservableViewModel {
      * */
     private void updateRunData() {
         trackerCallback = new TrackerCallback() {
-            private Location prevLocation = null;
-            private int duration = 0;
             private int distance = 0;
             private double pace = 0;
-            private int calories = 0;
 
             @Override
-            public void runningTrackerLocationEvent(Location location) {
-                if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_PAUSE)) {
-                    prevLocation = null;
-                }
-
-                if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_RUNNING)) {
-                    // 1
-                    setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
-
-                    // 2
-                    if (prevLocation != null) {
-                        if (Math.round(prevLocation.distanceTo(location)) < 100) {
-                            distance += Math.round(prevLocation.distanceTo(location));
+            public void runningTrackerLocationEvent(Location location, int timer) {
+                if (trackerBinder != null) {
+                    if (trackerBinder.getServiceStatus() != null) {
+                        if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_PAUSE)) {
+                            prevLocation = null;
                         }
+
+                        if (Objects.equals(trackerBinder.getServiceStatus(), TrackerService.SERVICE_RUNNING)) {
+                            // 1
+                            setLatLng(new LatLng(location.getLatitude(), location.getLongitude()));
+
+                            // 2
+                            if (prevLocation != null) {
+                                distance += Math.round(prevLocation.distanceTo(location));
+                            }
+
+                            // 3
+
+                            // 4
+                            double kilometers = ((double) distance / 1000);
+                            double minutes = ((double) timer / 60);
+
+                            if (kilometers != 0f) {
+                                pace = minutes / kilometers;
+                            }
+
+                            // 5
+                            int calories = (int) (kilometers * 60);
+
+                            // 6
+                            runDuration.postValue(timer);
+                            runDistance.postValue(distance);
+                            runPace.postValue(pace);
+                            runCalories.postValue(calories);
+
+                            notifyPropertyChanged(BR.runDuration);
+                            notifyPropertyChanged(BR.runDistance);
+                            notifyPropertyChanged(BR.runPace);
+                            notifyPropertyChanged(BR.runCalories);
+                        }
+
+                        prevLocation = location;
                     }
-
-                    // 3
-                    duration += 1;
-
-                    // 4
-                    double kilometers = ((double) distance / 1000);
-                    double minutes = ((double) duration / 60);
-
-                    if (kilometers != 0f) {
-                        pace = minutes / kilometers;
-                    }
-
-                    // 5
-                    calories = (int) (kilometers * 60);
-
-                    // 6
-                    runDuration.setValue(duration);
-                    runDistance.setValue(distance);
-                    runPace.setValue(pace);
-                    runCalories.setValue(calories);
-
-                    notifyPropertyChanged(BR.runDuration);
-                    notifyPropertyChanged(BR.runDistance);
-                    notifyPropertyChanged(BR.runPace);
-                    notifyPropertyChanged(BR.runCalories);
                 }
-
-                prevLocation = location;
             }
         };
     }
@@ -173,7 +172,7 @@ public class RunViewModel extends ObservableViewModel {
     public void finishRun() {
         if (trackerBinder != null) {
             // 1
-            isRunning = false;
+            isMapRunning = false;
             trackerBinder.stopRunning();
 
             // 2
@@ -224,23 +223,24 @@ public class RunViewModel extends ObservableViewModel {
      * 2. Clear the LatLng List and not draw on the map if service is pause.
      * */
     public void drawPolylineOnMap(List<LatLng> latLngList) {
+        if (trackerBinder != null) {
+            if (latLng != null && trackerBinder.getServiceStatus() != null) {
+                String statusService = trackerBinder.getServiceStatus();
+                latLngList.add(latLng);
 
-        if (latLng != null && trackerBinder.getServiceStatus() != null) {
-            String statusService = trackerBinder.getServiceStatus();
-            latLngList.add(latLng);
+                // 1
+                if (Objects.equals(statusService, TrackerService.SERVICE_RUNNING)) {
+                    PolylineOptions options = new PolylineOptions().color(Color.RED).width(10).addAll(latLngList);
+                    mMap.addPolyline(options);
+                    mMap.addMarker(new MarkerOptions().position(latLngList.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
+                    mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
 
-            // 1
-            if (Objects.equals(statusService, TrackerService.SERVICE_RUNNING)) {
-                PolylineOptions options = new PolylineOptions().color(Color.RED).width(10).addAll(latLngList);
-                mMap.addPolyline(options);
-                mMap.addMarker(new MarkerOptions().position(latLngList.get(0)).icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_ROSE)));
-                mMap.moveCamera(CameraUpdateFactory.newLatLngZoom(latLng, 15));
+                    // 2
+                } else if (Objects.equals(statusService, TrackerService.SERVICE_PAUSE)) {
+                    Log.d("comp3018", "Map paused");
 
-                // 2
-            } else if (Objects.equals(statusService, TrackerService.SERVICE_PAUSE)) {
-                Log.d("comp3018", "Map paused");
-
-                latLngList.clear();
+                    latLngList.clear();
+                }
             }
         }
     }
@@ -276,13 +276,13 @@ public class RunViewModel extends ObservableViewModel {
         this.savedStateHandle.set("latLng", latLng);
     }
 
-    public boolean isRunning() {
-        return isRunning;
+    public boolean isMapRunning() {
+        return isMapRunning;
     }
 
-    public void setRunning(boolean running) {
-        this.isRunning = running;
-        this.savedStateHandle.set("isRunning", isRunning);
+    public void setMapRunning(boolean mapRunning) {
+        this.isMapRunning = mapRunning;
+        this.savedStateHandle.set("isRunning", isMapRunning);
     }
 
     @Bindable
