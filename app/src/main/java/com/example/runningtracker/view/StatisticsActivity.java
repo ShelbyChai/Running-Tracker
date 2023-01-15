@@ -1,21 +1,17 @@
 package com.example.runningtracker.view;
 
-import androidx.appcompat.app.AppCompatActivity;
-import androidx.lifecycle.Observer;
-import androidx.lifecycle.ViewModelProvider;
-import androidx.lifecycle.ViewModelStoreOwner;
-
 import android.os.Bundle;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
+import androidx.appcompat.app.AppCompatActivity;
+import androidx.lifecycle.ViewModelProvider;
+
 import com.example.runningtracker.R;
 import com.example.runningtracker.databinding.ActivityStatisticsBinding;
-import com.example.runningtracker.model.RunRoomDatabase;
 import com.example.runningtracker.viewmodel.StatisticsViewModel;
 
 public class StatisticsActivity extends AppCompatActivity implements AdapterView.OnItemSelectedListener{

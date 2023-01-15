@@ -40,7 +40,11 @@ public class RunViewModel extends ObservableViewModel {
     private TrackerService.MyBinder trackerBinder = null;
     private TrackerCallback trackerCallback;
 
-    /* Declare required variables */
+    /*
+    * Declare Google Map associated variables
+    * latLng (pass to google map for update)
+    * isRunning (stop the google map update if set to false)
+    * */
     private GoogleMap mMap;
     private LatLng latLng;
     private boolean isRunning;

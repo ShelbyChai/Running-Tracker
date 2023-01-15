@@ -9,8 +9,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
-import com.example.runningtracker.helper.RunHelper;
 import com.example.runningtracker.R;
+import com.example.runningtracker.helper.RunHelper;
 import com.example.runningtracker.model.entity.Run;
 
 import java.util.ArrayList;
@@ -51,6 +51,8 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
         return data.size();
     }
 
+    // Set the current view of recycler view based on the passed data.
+    // Invoked this method when the spinner a new spinner item is selected.
     public void setData(List<Run> newData) {
         if (data != null) {
             data.clear();
@@ -78,6 +80,8 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
         }
 
         void bind(final Run run, final OnItemClickListener listener) {
+            // If run is not nul, display the element/item and text with the help of RunHelper class
+            // for text formatting.
             if (run != null) {
                 nameView.setText(run.getName());
                 distanceView.setText(RunHelper.formatDistance(run.getDistance()) + " km");
@@ -85,6 +89,7 @@ public class RunAdapter extends RecyclerView.Adapter<RunAdapter.RunViewHolder>{
                 dateTimeView.setText(run.getDateTimeFormatted());
             }
 
+            // Set onClickListener: Return the specific run object when clicked
             itemView.setOnClickListener(v -> listener.onItemClick(run));
         }
     }

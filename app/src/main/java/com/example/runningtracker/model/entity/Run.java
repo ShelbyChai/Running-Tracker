@@ -2,7 +2,6 @@ package com.example.runningtracker.model.entity;
 
 import android.content.ContentValues;
 
-import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.room.ColumnInfo;
 import androidx.room.Entity;

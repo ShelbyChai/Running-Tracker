@@ -66,9 +66,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         activityMainBinding.spinnerRunFilter.setOnItemSelectedListener(this);
 
 
-        // Setup recycler view adapter to display all Runs. When a run is clicked,
+        // Setup recycler view adapter to display all Runs. When a run item is clicked,
         // pass the primary key of the run (runID) via intent to RunRecordActivity
-        // in order to display the single run's record/information.
+        // to display the single run's record/information.
         adapter = new RunAdapter(this, run -> {
             Log.d("comp3018", "Run ID: " + run.getRun_ID());
             Intent intent = new Intent(MainActivity.this, RunRecordActivity.class);
@@ -80,8 +80,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     /*
-    * Onclick: Only request permission for Location Permission on runtime, also check if GPS
-    * settings when the user starts to interact with the tracker service that requires the permission.
+    * Onclick: Only request runtime permission for Location Permission when the user click  on the
+    * "Start Running" button, also check and request to turn on GPS settings if its off.
     * */
     public void onClickStartRunActivity(View view) {
         locationPermissionRequest.launch(new String[]{
@@ -213,7 +213,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     }
 
     /*
-    * When a spinner item is selected, change the data of the recycler view.
+    * When a spinner item is selected, change the observable data of the recycler view.
     * Filter type contains (Recent, Distance, Pace & Calories)
     * */
     @Override

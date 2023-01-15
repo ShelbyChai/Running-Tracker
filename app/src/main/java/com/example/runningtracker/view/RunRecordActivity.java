@@ -120,8 +120,8 @@ public class RunRecordActivity extends AppCompatActivity {
     }
 
     /*
-     * Set action for delete/discard icon in the end of top app bar.
-     * When onClick, delete the current run record and finish the activity.
+     * Set action for delete button on the end of top app bar.
+     * When onClick, delete the current run record, display a toast message and destroy the activity.
      * */
     @Override
     public boolean onOptionsItemSelected(@NonNull MenuItem item) {

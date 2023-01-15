@@ -1,13 +1,11 @@
 package com.example.runningtracker.viewmodel;
 
 import android.app.Application;
-import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.databinding.Bindable;
 import androidx.lifecycle.LiveData;
 import androidx.lifecycle.MutableLiveData;
-import androidx.lifecycle.SavedStateHandle;
 
 import com.example.runningtracker.BR;
 import com.example.runningtracker.model.entity.Run;
@@ -20,12 +18,17 @@ import java.util.Objects;
 
 public class StatisticsViewModel extends ObservableViewModel {
 
+    /*
+    * Declare the variables for calculateRunsAverage() and bind its value to the corresponnding
+    * view in the layout file.
+    * */
     private int runsCount;
     private int totalDistance ;
     private double averagePace;
     private int totalCalories;
     private int totalDuration;
 
+    // Declare MutableLiveData to hold the current value of the spinner for displaying different graph view
     private final MutableLiveData<String> selectedSpinnerText = new MutableLiveData<>();
     private final LiveData<List<Run>> allRuns;
 
@@ -39,7 +42,8 @@ public class StatisticsViewModel extends ObservableViewModel {
         allRuns = myRepository.getRuns();
     }
 
-    // Calculate the total distance, pace, duration, activity and average pace for display.
+    // Calculate the total distance, pace, duration, activity and average pace for display if
+    // the number of total run is not 0.
     public void calculateRunsAverages() {
         totalDistance = 0;
         averagePace = 0;
@@ -59,7 +63,7 @@ public class StatisticsViewModel extends ObservableViewModel {
 
             averagePace = averagePace / runsCount;
 
-            // Notify for changes
+            // Notify the bind view for changes
             notifyPropertyChanged(BR.totalDistance);
             notifyPropertyChanged(BR.averagePace);
             notifyPropertyChanged(BR.totalCalories);
