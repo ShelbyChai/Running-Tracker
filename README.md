@@ -4,18 +4,18 @@ A simple running tracker app design with Java to keep track of your Running reco
 
 ## Features
 
--   GPS tracking with maps and fitness stats monitoring
 -   Run logs with sorting functionality
--   Profile fitness stats statistics
+-   GPS tracking with maps and fitness stats monitoring
+-   Profile fitness stats statistic
 -   Run history customisation
 
-## Installation
+## Install
 
 Get the apk from the [releases page](https://github.com/ShelbyChai/Running-Tracker/releases).
 
 ## Screenshots
 
-|                   Running Logs                   |                    Run Activities                     |                       Profile Statistics                        |
+|                   Running Logs                   |                     Start Running                     |                        Profile Statistic                        |
 | :----------------------------------------------: | :---------------------------------------------------: | :-------------------------------------------------------------: |
 | <img src="./.github/readme-images/run-log.png"/> | <img src="./.github/readme-images/run-activity.png"/> | <img src="./.github/readme-images/profile-fitness-stats.png" /> |
 
